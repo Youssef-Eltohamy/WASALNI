@@ -11,6 +11,10 @@ class RoutePaths {
   static const String forgotPassword = '/auth/forgot-password';
   static const String resetPassword = '/auth/reset-password';
 
+  // Deep link landing routes (Supabase redirect targets)
+  static const String authConfirmCallback = '/auth/confirm';
+  static const String authResetPasswordCallback = '/auth/reset-password-callback';
+
   // Profile
   static const String profileSetup = '/profile/setup';
   static const String myAccount = '/profile/me';

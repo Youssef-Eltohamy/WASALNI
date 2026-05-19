@@ -21,6 +21,29 @@ class AppRouter {
         final authStatus = authBloc.state.status;
         final loc = state.matchedLocation;
 
+        // الـ deep link callbacks (Supabase email confirmation, password reset):
+        // امسكها قبل أي logic تاني وخليها تتصرف على حسب الـ auth state.
+        // Supabase SDK بيعالج الـ token تلقائياً وهيحدّث AuthBloc.
+        if (loc == RoutePaths.authConfirmCallback ||
+            loc == RoutePaths.authResetPasswordCallback) {
+          // استنى لحد ما الـ state يتحدّث
+          if (authStatus == AuthStatus.unknown ||
+              authStatus == AuthStatus.processing) {
+            return null;
+          }
+          // بعد ما الـ state يتحدث، وجّه على حسب
+          if (authStatus == AuthStatus.authenticatedNoProfile) {
+            return RoutePaths.profileSetup;
+          }
+          if (authStatus == AuthStatus.authenticated) {
+            return RoutePaths.feed;
+          }
+          if (authStatus == AuthStatus.awaitingEmailConfirmation) {
+            return RoutePaths.emailConfirmation;
+          }
+          return RoutePaths.feed;
+        }
+
         // عند البدء، استنى نعرف الـ state
         if (authStatus == AuthStatus.unknown) {
           return loc == RoutePaths.splash ? null : RoutePaths.splash;
@@ -69,6 +92,18 @@ class AppRouter {
         GoRoute(
           path: RoutePaths.emailConfirmation,
           builder: (context, state) => const EmailConfirmationPage(),
+        ),
+        GoRoute(
+          path: RoutePaths.authConfirmCallback,
+          builder: (context, state) => const _DeepLinkLandingPage(
+            message: 'بنأكد إيميلك...',
+          ),
+        ),
+        GoRoute(
+          path: RoutePaths.authResetPasswordCallback,
+          builder: (context, state) => const _DeepLinkLandingPage(
+            message: 'جاري التحضير لإعادة تعيين كلمة السر...',
+          ),
         ),
         GoRoute(
           path: RoutePaths.forgotPassword,
@@ -273,6 +308,32 @@ class _PageStub extends StatelessWidget {
         child: Text(
           'شاشة "$title" - قيد التطوير',
           style: const TextStyle(color: Colors.grey),
+        ),
+      ),
+    );
+  }
+}
+
+/// شاشة وسيطة بتظهر لما deep link يفتح التطبيق.
+/// الـ router redirect يوجه المستخدم بعد ما الـ AuthBloc يتحدّث.
+class _DeepLinkLandingPage extends StatelessWidget {
+  const _DeepLinkLandingPage({required this.message});
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const CircularProgressIndicator(color: Color(0xFF1B998B)),
+            const SizedBox(height: 24),
+            Text(
+              message,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ],
         ),
       ),
     );
