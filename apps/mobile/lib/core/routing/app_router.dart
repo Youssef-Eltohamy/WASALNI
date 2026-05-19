@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/pages/email_confirmation_page.dart';
+import '../../features/auth/presentation/pages/signin_page.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
 import '../../features/profile/presentation/pages/profile_setup_page.dart';
 import 'route_paths.dart';
@@ -62,7 +63,7 @@ class AppRouter {
         ),
         GoRoute(
           path: RoutePaths.signin,
-          builder: (context, state) => const _PageStub(title: 'تسجيل دخول'),
+          builder: (context, state) => const SigninPage(),
         ),
         GoRoute(
           path: RoutePaths.emailConfirmation,
