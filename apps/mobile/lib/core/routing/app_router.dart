@@ -17,8 +17,27 @@ class AppRouter {
     return GoRouter(
       initialLocation: RoutePaths.splash,
       refreshListenable: _GoRouterRefreshStream(authBloc.stream),
+      errorBuilder: (context, state) {
+        // Safety net: لو deep link غلط، روح الـ Feed بدل crash
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (context.mounted) context.go(RoutePaths.feed);
+        });
+        return const _DeepLinkLandingPage(
+          message: 'بنرجّعك للصفحة الرئيسية...',
+        );
+      },
       redirect: (context, state) {
         final authStatus = authBloc.state.status;
+        final uri = state.uri;
+
+        // إذا الـ URI جاي كـ deep link بـ wasalni:// scheme،
+        // نحوله لمسار داخلي قبل أي logic.
+        if (uri.scheme == 'wasalni') {
+          final path = '/${uri.host}${uri.path}'.replaceAll('//', '/');
+          final query = uri.hasQuery ? '?${uri.query}' : '';
+          return '$path$query';
+        }
+
         final loc = state.matchedLocation;
 
         // الـ deep link callbacks (Supabase email confirmation, password reset):
@@ -26,6 +45,12 @@ class AppRouter {
         // Supabase SDK بيعالج الـ token تلقائياً وهيحدّث AuthBloc.
         if (loc == RoutePaths.authConfirmCallback ||
             loc == RoutePaths.authResetPasswordCallback) {
+          // لو فيه error في الـ URL (لينك منتهي مثلاً)، رجّعه لشاشة التأكيد
+          // عشان يقدر يضغط "إعادة إرسال"
+          if (uri.queryParameters.containsKey('error') ||
+              (uri.fragment.contains('error='))) {
+            return RoutePaths.emailConfirmation;
+          }
           // استنى لحد ما الـ state يتحدّث
           if (authStatus == AuthStatus.unknown ||
               authStatus == AuthStatus.processing) {
