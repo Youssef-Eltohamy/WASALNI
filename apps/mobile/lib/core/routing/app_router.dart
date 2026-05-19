@@ -6,6 +6,7 @@ import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/pages/email_confirmation_page.dart';
 import '../../features/auth/presentation/pages/signin_page.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
+import '../../features/auth/presentation/widgets/auth_required_modal.dart';
 import '../../features/profile/presentation/pages/profile_setup_page.dart';
 import 'route_paths.dart';
 
@@ -220,12 +221,36 @@ class _FeedPlaceholder extends StatelessWidget {
               BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, state) {
                   if (state.isGuest) {
-                    return ElevatedButton(
-                      onPressed: () => context.go(RoutePaths.signup),
-                      child: const Text('أنشئ حساب'),
+                    return Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => context.go(RoutePaths.signup),
+                          child: const Text('أنشئ حساب'),
+                        ),
+                        const SizedBox(height: 12),
+                        OutlinedButton.icon(
+                          icon: const Icon(Icons.storefront),
+                          label: const Text('سجّل نشاطك'),
+                          onPressed: () => AuthRequiredModal.show(
+                            context,
+                            message: 'سجل دخولك عشان تقدر تسجل نشاطك',
+                            icon: Icons.storefront,
+                          ),
+                        ),
+                      ],
                     );
                   }
-                  return const SizedBox.shrink();
+                  return ElevatedButton.icon(
+                    icon: const Icon(Icons.storefront),
+                    label: const Text('سجّل نشاطك'),
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('تسجيل النشاط سيتم تنفيذه في Spec 3'),
+                        ),
+                      );
+                    },
+                  );
                 },
               ),
             ],
