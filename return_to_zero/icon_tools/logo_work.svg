@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="44%" cy="38%" r="80%">
+      <stop offset="0%" stop-color="#21657A"/><stop offset="100%" stop-color="#184F61"/>
+    </radialGradient>
+    <filter id="sh" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="4" dy="11" stdDeviation="9" flood-color="#0A2E3A" flood-opacity="0.40"/>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="url(#bg)"/>
+
+  <g filter="url(#sh)" fill="none" stroke="#FFFFFF" stroke-width="44" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M290 140 C240 110 165 122 145 185 C128 250 178 302 244 294 C298 286 322 242 312 198 C308 176 300 158 286 146"/>
+    <path d="M312 198 C332 248 338 318 324 366 C311 420 256 442 212 428 C180 419 160 431 162 407 C164 387 188 384 200 398"/>
+  </g>
+
+  <g fill="none" stroke="#16505F" stroke-width="6" stroke-linecap="round" stroke-dasharray="16 22">
+    <path d="M290 140 C240 110 165 122 145 185 C128 250 178 302 244 294 C298 286 322 242 312 198 C308 176 300 158 286 146"/>
+    <path d="M312 198 C332 248 338 318 324 366 C311 420 256 442 212 428 C180 419 160 431 162 407 C164 387 188 384 200 398"/>
+  </g>
+
+  <circle cx="348" cy="138" r="40" fill="#F26A38"/>
+</svg>

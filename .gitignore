@@ -66,3 +66,13 @@ supabase/.env
 
 # ===== Spec Kit =====
 .specify/cache/
+
+# Visual brainstorm companion (local only)
+.superpowers/
+
+# ===== Node modules (any) =====
+node_modules/
+
+# ===== return_to_zero tooling / temp previews =====
+return_to_zero/icon_tools/node_modules/
+return_to_zero/icon_tools/*_preview.png
