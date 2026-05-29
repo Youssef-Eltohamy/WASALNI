@@ -1,6 +1,7 @@
 import '../../models/category.dart';
 import '../../models/enums.dart';
 import '../../models/listing.dart';
+import '../../models/product.dart';
 import '../../models/village.dart';
 
 /// Realistic seed data for Kafr El-Maqdam & Tahna. Mirrors the schema draft
@@ -61,5 +62,18 @@ abstract final class MockData {
       categoryId: 'cat_plumb', name: 'سباك تفهنا', bio: 'صيانة سريعة',
       phoneWhatsapp: '+201000000008', status: ListingStatus.active,
       createdAt: DateTime.utc(2026, 1, 9)),
+  ];
+
+  static final products = <Product>[
+    // صيدلية الشفاء (l4)
+    Product(id: 'p1', listingId: 'l4', name: 'بنادول إكسترا', description: 'علبة 24 قرص', priceEgp: 35),
+    Product(id: 'p2', listingId: 'l4', name: 'فوار فيتامين سي', description: '10 أكياس', priceEgp: 45),
+    Product(id: 'p3', listingId: 'l4', name: 'كمامات طبية', description: 'علبة 50', priceEgp: 30, isAvailable: false),
+    // بقالة أبو أحمد (l5)
+    Product(id: 'p4', listingId: 'l5', name: 'زيت عافية 1 لتر', description: 'زيت دوار الشمس', priceEgp: 60),
+    Product(id: 'p5', listingId: 'l5', name: 'سكر 1 كيلو', description: 'سكر أبيض', priceEgp: 30),
+    Product(id: 'p6', listingId: 'l5', name: 'شاي العروسة', description: 'علبة 250 جرام', priceEgp: 40),
+    // سوبر ماركت تفهنا (l7)
+    Product(id: 'p7', listingId: 'l7', name: 'أرز مصري 1 كيلو', description: 'أرز شعير', priceEgp: 35),
   ];
 }
