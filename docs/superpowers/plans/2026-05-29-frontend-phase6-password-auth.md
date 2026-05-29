@@ -1437,3 +1437,17 @@ Dispatch a final code-review subagent over the whole password-auth feature. Veri
 
 Then update `docs/superpowers/plans/PROGRESS-phase6-password-auth.md` and note deferred follow-ups (real Supabase auth + password hashing, email option, session persistence, rate-limiting).
 ```
+
+---
+
+## Next iteration — requested enhancements (2026-05-29, NOT yet implemented)
+
+The owner requested these after testing. **They are scheduled for the next auth iteration, not built yet.** Build them as a follow-up plan via subagent-driven.
+
+1. **Split the forgot-password flow into separate screens.** Currently the OTP code field and the new-password field share one screen (inline). Required: phone screen → **OTP on its own screen** → (only after the code verifies correctly) navigate to a **separate "new password" screen**. So three steps, three screens, with navigation gated on a correct OTP. This likely means the OTP verify and the password set become two repo calls: `verifyResetCode(phone, code)` (validate only) then `setNewPassword(phone, token/code, newPassword)` — or carry a short-lived verified token between screens.
+
+2. **Reset OTP validity = 2 minutes (not 30s).** On the reset flow, the OTP code is valid for **2 minutes**; the on-screen countdown should reflect 120s (the shared `OtpCodeField.startSeconds` is currently 30). Add real expiry: a code older than 2 minutes is rejected (mock can stamp the code's issue time and check it).
+
+3. **Resend hard cooldown = 5 minutes per phone.** A user must NOT be able to request an OTP for the **same phone number** more than once within **5 minutes** — enforced at the repository level (per-phone timestamp), not just a UI countdown. Applies to BOTH `startSignup` and `startReset`. On a too-soon retry, surface a clear message ("اطلبت كود لسه، استنى شوية قبل ما تطلب تاني") with the remaining time.
+
+> **Design tension to resolve at build time:** OTP validity (2 min, item 2) is shorter than the resend cooldown (5 min, item 3) — if the code expires at 2 min the user can't get a new one for 3 more min. Decide one of: (a) allow an immediate resend once the code has expired (cooldown applies only while a code is still valid), or (b) align the numbers. Confirm with the owner during the next iteration.
