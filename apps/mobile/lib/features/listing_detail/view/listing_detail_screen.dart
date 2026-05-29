@@ -7,9 +7,11 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/error_view.dart';
 import '../../../core/widgets/loading_view.dart';
+import '../../../data/models/enums.dart';
 import '../../../data/models/listing.dart';
 import '../bloc/listing_detail_bloc.dart';
 import '../bloc/listing_detail_state.dart';
+import '../../products/widgets/shop_products_section.dart';
 
 class ListingDetailScreen extends StatelessWidget {
   const ListingDetailScreen({super.key, this.launcher = const ContactLauncher()});
@@ -104,6 +106,10 @@ class _DetailBody extends StatelessWidget {
                       ),
                     ],
                   ),
+                  if (listing.kind == ListingKind.shop) ...[
+                    const SizedBox(height: AppSpacing.xl),
+                    ShopProductsSection(shopId: listing.id),
+                  ],
                 ],
               ),
             ),
