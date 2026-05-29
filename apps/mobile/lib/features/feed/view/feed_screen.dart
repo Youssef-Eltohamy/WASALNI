@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/empty_view.dart';
 import '../../../core/widgets/error_view.dart';
@@ -48,7 +49,15 @@ class _FeedScreenState extends State<FeedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('وصلني')),
+      appBar: AppBar(
+        title: const Text('وصلني'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () => context.push('/search'),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           if (_villages.isNotEmpty && _selectedVillageId != null)

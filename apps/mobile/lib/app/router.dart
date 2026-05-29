@@ -11,6 +11,8 @@ import '../features/categories/view/category_listings_screen.dart';
 import '../features/favorites/favorites_placeholder.dart';
 import '../features/feed/bloc/feed_bloc.dart';
 import '../features/feed/view/feed_screen.dart';
+import '../features/search/bloc/search_bloc.dart';
+import '../features/search/view/search_screen.dart';
 import '../features/shell/scaffold_with_nav_bar.dart';
 import 'di.dart';
 
@@ -58,6 +60,13 @@ GoRouter createRouter() {
             categoryName: state.extra as String? ?? 'التصنيف',
             villageRepository: getIt<VillageRepository>(),
           ),
+        ),
+      ),
+      GoRoute(
+        path: '/search',
+        builder: (context, state) => BlocProvider(
+          create: (_) => SearchBloc(getIt<ListingRepository>()),
+          child: SearchScreen(villageRepository: getIt<VillageRepository>()),
         ),
       ),
     ],
