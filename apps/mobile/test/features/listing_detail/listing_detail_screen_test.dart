@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wasalni/data/repositories/listing_repository.dart';
 import 'package:wasalni/data/repositories/mock/mock_listing_repository.dart';
+import 'package:wasalni/features/cart/bloc/cart_cubit.dart';
 import 'package:wasalni/features/listing_detail/bloc/listing_detail_bloc.dart';
 import 'package:wasalni/features/listing_detail/bloc/listing_detail_event.dart';
 import 'package:wasalni/features/listing_detail/view/listing_detail_screen.dart';
@@ -14,8 +15,13 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       home: Directionality(
         textDirection: TextDirection.rtl,
-        child: BlocProvider(
-          create: (_) => ListingDetailBloc(repo)..add(const ListingDetailRequested('l1')),
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (_) => ListingDetailBloc(repo)..add(const ListingDetailRequested('l1')),
+            ),
+            BlocProvider(create: (_) => CartCubit()),
+          ],
           child: const ListingDetailScreen(),
         ),
       ),

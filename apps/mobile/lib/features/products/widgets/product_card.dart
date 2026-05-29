@@ -6,9 +6,10 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../data/models/product.dart';
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({super.key, required this.product, required this.onTap});
+  const ProductCard({super.key, required this.product, required this.onTap, this.onAdd});
   final Product product;
   final VoidCallback onTap;
+  final VoidCallback? onAdd;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +33,13 @@ class ProductCard extends StatelessWidget {
           style: AppTextStyles.caption.copyWith(
             color: product.isAvailable ? AppColors.primary : AppColors.accent),
         ),
+        trailing: (onAdd != null && product.isAvailable)
+            ? IconButton(
+                icon: const Icon(Icons.add_shopping_cart, color: AppColors.primary),
+                tooltip: 'أضف للسلة',
+                onPressed: onAdd,
+              )
+            : null,
       ),
     );
   }

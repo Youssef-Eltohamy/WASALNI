@@ -5,14 +5,23 @@ import '../../../app/di.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../data/repositories/product_repository.dart';
+import '../../cart/bloc/cart_cubit.dart';
 import '../bloc/products_bloc.dart';
 import '../bloc/products_event.dart';
 import '../bloc/products_state.dart';
 import 'product_card.dart';
 
 class ShopProductsSection extends StatelessWidget {
-  const ShopProductsSection({super.key, required this.shopId, this.repository});
+  const ShopProductsSection({
+    super.key,
+    required this.shopId,
+    required this.shopName,
+    required this.shopPhone,
+    this.repository,
+  });
   final String shopId;
+  final String shopName;
+  final String shopPhone;
   final ProductRepository? repository;
 
   @override
@@ -41,6 +50,13 @@ class ShopProductsSection extends StatelessWidget {
                       ProductCard(
                         product: p,
                         onTap: () => context.push('/product/${p.id}'),
+                        onAdd: () {
+                          context.read<CartCubit>().addProduct(
+                                product: p, shopId: shopId, shopName: shopName, shopPhone: shopPhone);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('تمت إضافة ${p.name} للسلة'), duration: const Duration(seconds: 1)),
+                          );
+                        },
                       ),
                   ],
                 ),

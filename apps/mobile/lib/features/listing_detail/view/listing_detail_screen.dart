@@ -11,6 +11,7 @@ import '../../../data/models/enums.dart';
 import '../../../data/models/listing.dart';
 import '../bloc/listing_detail_bloc.dart';
 import '../bloc/listing_detail_state.dart';
+import '../../cart/widgets/cart_icon_button.dart';
 import '../../products/widgets/shop_products_section.dart';
 
 class ListingDetailScreen extends StatelessWidget {
@@ -62,6 +63,7 @@ class _DetailBody extends StatelessWidget {
           SliverAppBar(
             expandedHeight: 200,
             pinned: true,
+            actions: const [CartIconButton()],
             flexibleSpace: FlexibleSpaceBar(
               background: (listing.logoUrl == null || listing.logoUrl!.isEmpty)
                   ? Container(
@@ -108,7 +110,11 @@ class _DetailBody extends StatelessWidget {
                   ),
                   if (listing.kind == ListingKind.shop) ...[
                     const SizedBox(height: AppSpacing.xl),
-                    ShopProductsSection(shopId: listing.id),
+                    ShopProductsSection(
+                      shopId: listing.id,
+                      shopName: listing.name,
+                      shopPhone: listing.phoneWhatsapp,
+                    ),
                   ],
                 ],
               ),
