@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/empty_view.dart';
 import '../../../core/widgets/error_view.dart';
@@ -81,7 +82,7 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
               itemCount: results.length,
               itemBuilder: (context, i) =>
-                  ListingCard(listing: results[i], onTap: () {}),
+                  ListingCard(listing: results[i], onTap: () => context.push('/listing/${results[i].id}')),
             ),
         },
       ),

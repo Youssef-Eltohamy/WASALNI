@@ -98,7 +98,7 @@ class _FeedScreenState extends State<FeedScreen> {
                       ),
                       itemCount: listings.length,
                       itemBuilder: (ctx, idx) =>
-                          ListingCard(listing: listings[idx], onTap: () {}),
+                          ListingCard(listing: listings[idx], onTap: () => ctx.push('/listing/${listings[idx].id}')),
                     ),
                 },
               ),

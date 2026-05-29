@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/empty_view.dart';
 import '../../../core/widgets/error_view.dart';
@@ -60,7 +61,7 @@ class _CategoryListingsScreenState extends State<CategoryListingsScreen> {
               ),
               itemCount: listings.length,
               itemBuilder: (context, i) =>
-                  ListingCard(listing: listings[i], onTap: () {}),
+                  ListingCard(listing: listings[i], onTap: () => context.push('/listing/${listings[i].id}')),
             ),
         },
       ),

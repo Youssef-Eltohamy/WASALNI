@@ -11,6 +11,9 @@ import '../features/categories/view/category_listings_screen.dart';
 import '../features/favorites/favorites_placeholder.dart';
 import '../features/feed/bloc/feed_bloc.dart';
 import '../features/feed/view/feed_screen.dart';
+import '../features/listing_detail/bloc/listing_detail_bloc.dart';
+import '../features/listing_detail/bloc/listing_detail_event.dart';
+import '../features/listing_detail/view/listing_detail_screen.dart';
 import '../features/search/bloc/search_bloc.dart';
 import '../features/search/view/search_screen.dart';
 import '../features/shell/scaffold_with_nav_bar.dart';
@@ -67,6 +70,14 @@ GoRouter createRouter() {
         builder: (context, state) => BlocProvider(
           create: (_) => SearchBloc(getIt<ListingRepository>()),
           child: SearchScreen(villageRepository: getIt<VillageRepository>()),
+        ),
+      ),
+      GoRoute(
+        path: '/listing/:id',
+        builder: (context, state) => BlocProvider(
+          create: (_) => ListingDetailBloc(getIt<ListingRepository>())
+            ..add(ListingDetailRequested(state.pathParameters['id']!)),
+          child: const ListingDetailScreen(),
         ),
       ),
     ],
