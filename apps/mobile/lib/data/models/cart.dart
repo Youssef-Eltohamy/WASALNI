@@ -33,7 +33,8 @@ abstract class ShopCart with _$ShopCart {
   double get total =>
       lines.fold(0, (sum, l) => sum + (l.isUnavailable ? 0 : l.lineTotal));
   int get itemCount => lines.fold(0, (sum, l) => sum + l.qty);
-  bool get canSend => shopPhone.trim().isNotEmpty && lines.isNotEmpty;
+  bool get canSend =>
+      shopPhone.trim().isNotEmpty && lines.any((l) => !l.isUnavailable);
   bool get hasIssues => lines.any((l) => l.isUnavailable || l.priceChanged);
 }
 

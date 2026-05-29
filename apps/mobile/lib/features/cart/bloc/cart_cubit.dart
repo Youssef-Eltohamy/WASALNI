@@ -78,7 +78,13 @@ class CartCubit extends Cubit<Cart> {
   }
 
   void _put(ShopCart shop) {
-    final others = state.shopCarts.where((s) => s.shopId != shop.shopId);
-    emit(Cart(shopCarts: [...others, shop]));
+    final idx = state.shopCarts.indexWhere((s) => s.shopId == shop.shopId);
+    if (idx < 0) {
+      emit(Cart(shopCarts: [...state.shopCarts, shop]));
+    } else {
+      final next = [...state.shopCarts];
+      next[idx] = shop;
+      emit(Cart(shopCarts: next));
+    }
   }
 }

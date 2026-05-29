@@ -51,4 +51,12 @@ void main() {
   test('empty Cart reports isEmpty', () {
     expect(const Cart(shopCarts: []).isEmpty, isTrue);
   });
+
+  test('canSend is false when every line is unavailable', () {
+    final cart = ShopCart(
+      shopId: 's1', shopName: 'محل', shopPhone: '+201000000000',
+      lines: [_line('p1').copyWith(isUnavailable: true)],
+    );
+    expect(cart.canSend, isFalse);
+  });
 }

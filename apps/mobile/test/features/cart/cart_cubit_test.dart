@@ -82,4 +82,17 @@ void main() {
       expect(line.latestPriceEgp, 12);
     },
   );
+
+  blocTest<CartCubit, Cart>(
+    'mutating an existing shop keeps its position (does not jump to the end)',
+    build: CartCubit.new,
+    act: (c) {
+      addP1(c); // s1 first
+      c.addProduct(product: _prod('p9'), shopId: 's2', shopName: 'محل ب', shopPhone: 'y'); // s2 second
+      c.increment('s1', 'p1'); // mutate s1 — must stay first
+    },
+    verify: (c) {
+      expect(c.state.shopCarts.map((s) => s.shopId).toList(), ['s1', 's2']);
+    },
+  );
 }
