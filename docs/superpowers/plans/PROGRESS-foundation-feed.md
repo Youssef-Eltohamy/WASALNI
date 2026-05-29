@@ -1,15 +1,15 @@
 # تقدّم التنفيذ — Foundation + Feed
 
-> **آخر تحديث:** 2026-05-29 16:21
+> **آخر تحديث:** 2026-05-29 16:43
 > **الخطة:** `docs/superpowers/plans/2026-05-29-frontend-foundation-and-feed.md`
 > **طريقة التنفيذ:** Subagent-Driven (وكيل لكل task)
 > **الفرع:** `002-rebuild-from-zero`
 
 ## النسبة المئوية
 
-**8 / 14 خلصت = ~57%**
+**14 / 14 خلصت = 100%** ✅ (باقي: مراجعة شاملة نهائية + إنهاء الفرع)
 
-`[████████░░░░░] 57%`
+`[██████████████] 100%`
 
 ## الحالة بالتفصيل
 
@@ -23,32 +23,26 @@
 | 6 | Mock repositories (+tests) | ✅ تم | `efa3328` |
 | 7 | DI (get_it) | ✅ تم | `11ae874` |
 | 8 | Connectivity service + cubit (+test) | ✅ تم | `11ae874` |
-| 9 | Shared state widgets (+tests) | ⏳ شغّال دلوقتي | — |
-| 10 | Navigation shell + app boot | ⬜ باقي | — |
-| 11 | FeedBloc | ⬜ باقي | — |
-| 12 | ListingCard widget | ⬜ باقي | — |
-| 13 | FeedScreen + states | ⬜ باقي | — |
-| 14 | Wire Feed into shell + verify | ⬜ باقي | — |
+| 9 | Shared state widgets (+tests) | ✅ تم | `4302413` |
+| 10 | Navigation shell + app boot (+test) | ✅ تم | `70ac0b7` |
+| 11 | FeedBloc (+3 bloc_tests) | ✅ تم | `2310924` |
+| 12 | ListingCard widget (+test) | ✅ تم | `233d550` |
+| 13 | FeedScreen + states (+test) + ربط router | ✅ تم | `6e6da15` |
+| 14 | تحقق نهائي + تشغيل بصري | ✅ تم | (مفيش كود) |
 
-## اللي تم (تفصيل)
+## نتيجة التحقق النهائي
 
-- **Task 1 (`aea80c5`):** deps + خط Cairo + pubspec. json_serializable مؤجّل.
-- **Task 2 (`a29883a`):** theme tokens (ألوان/مسافات/خطوط/ThemeData M3).
-- **Task 3 (`1e02ec6`):** enums + models freezed (Listing/Village/Category). اكتشاف: build_runner لازم `--force-jit`.
-- **Task 4 (`15940d7`):** RepositoryException (sealed) + interfaces.
-- **Task 5 (`5458462`):** mock data واقعية (8 listings، قريتين، 6 فئات).
-- **Task 6 (`efa3328`):** mock repositories + 3 tests (فلترة قرية/نوع، NotFound).
-- **Task 7+8 (`11ae874`):** ConnectivityService + Cubit (test عدّى) + DI (get_it، نقطة تبديل mock↔supabase). connectivity_plus 7.1.1 مطابق.
+- **`flutter analyze`: نظيف (No issues found).**
+- **`flutter test`: 14/14 يعدّي.**
+- **تشغيل بصري:** التطبيق اتشغّل على web-server و الـ Feed ظهر صح — شريط بترولي "وصلني"، فلتر القرى (كفر المقدام/تفهنا)، جريد عمودين بكروت listing (المميّز/الموثّق الأول + شارة موثّق)، bottom nav بـ4 تابات، RTL وخط Cairo سليم.
 
-## اللي باقي (تفصيل)
+## الخطوات اللي بعد كده
 
-- **Task 9 (شغّال):** shared widgets (Loading/Empty/Error/OfflineBanner) + widget tests.
-- **Task 10:** go_router StatefulShellRoute بـ4 تابات + app.dart + main.dart + boot test (RTL + تبديل تابات).
-- **Task 11:** FeedBloc (states freezed sealed + events) + 3 bloc_tests.
-- **Task 12:** ListingCard (verified badge + image fallback) + widget test.
-- **Task 13:** شاشة Feed (جريد عمودين + فلتر قرية + كل الحالات) + widget test.
-- **Task 14:** ربط Feed بالـ shell عبر DI + analyze + كل الاختبارات + تشغيل يدوي + مراجعة شاملة نهائية.
+- **مراجعة شاملة نهائية** (code-reviewer subagent على كل التنفيذ `apps/mobile`) — جارية.
+- **إنهاء الفرع** (finishing-a-development-branch): قرار الدمج/PR.
+- **بعد المرحلة دي (خطط لاحقة):** باقي الشاشات (تصنيفات، بحث، بروفايلات، سلة، auth، حساب...) ثم تثبيت الـ schema و ربط Supabase.
 
-## ملاحظات
-- كل الاختبارات اللي اتعملت لحد دلوقتي بتعدّي + `flutter analyze` نظيف بعد كل task.
-- المراجعة الشاملة النهائية (code-reviewer subagent) بعد Task 14.
+## ملاحظات تنفيذية
+- json_serializable مؤجّل للباك (تعارض bloc_test + مش محتاجينه في الـ mock).
+- build_runner لازم `--force-jit` على Dart 3.10.
+- 12 commit للتنفيذ (aea80c5..6e6da15)، صفر deviations جوهرية، كل task باختباراته خضراء.
