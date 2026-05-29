@@ -43,12 +43,22 @@ dependencies:
 
   # Arabic locale support
   intl: ^0.20.2
+  flutter_bloc: ^9.1.1
+  go_router: ^17.2.3
+  get_it: ^9.2.1
+  connectivity_plus: ^7.1.1
+  cached_network_image: ^3.4.1
+  freezed_annotation: ^3.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^6.0.0
+  build_runner: ^2.15.0
+  freezed: ^3.2.3
+  bloc_test: ^10.0.0
+  mocktail: ^1.0.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -58,6 +68,10 @@ flutter:
   uses-material-design: true
   assets:
     - .env
+  fonts:
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/Cairo.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:
