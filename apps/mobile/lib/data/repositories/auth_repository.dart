@@ -5,11 +5,12 @@ abstract interface class AuthRepository {
   Future<Profile> login({required String phone, required String password});
 
   /// Starts signup: validates the phone is free and "sends" an OTP.
-  /// Throws [PhoneAlreadyRegisteredException] if the phone is taken.
+  /// Throws [PhoneAlreadyRegisteredException] if the phone is taken,
+  /// [OtpResendTooSoonException] if a still-valid code already exists.
   Future<void> startSignup({required String phone});
 
   /// Confirms signup with the OTP code, creates the account, returns the profile.
-  /// Throws [OtpWrongCodeException] on a bad code.
+  /// Throws [OtpWrongCodeException] on a bad code, [OtpExpiredException] if expired.
   Future<Profile> confirmSignup({
     required String name,
     required String phone,
@@ -18,7 +19,8 @@ abstract interface class AuthRepository {
   });
 
   /// Starts a password reset: validates the account exists and "sends" an OTP.
-  /// Throws [AccountNotFoundException] if there is no account.
+  /// Throws [AccountNotFoundException] if there is no account,
+  /// [OtpResendTooSoonException] if a still-valid code already exists.
   Future<void> startReset({required String phone});
 
   /// Verifies a reset OTP and returns a short-lived reset token.

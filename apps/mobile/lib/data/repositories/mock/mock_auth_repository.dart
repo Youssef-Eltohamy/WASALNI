@@ -30,8 +30,8 @@ class MockAuthRepository implements AuthRepository {
   final Duration latency;
   final DateTime Function() _now;
   static const _magicCode = '1234';
-  static const codeValidity = Duration(minutes: 2);
-  static const tokenValidity = Duration(minutes: 5);
+  static const _codeValidity = Duration(minutes: 2);
+  static const _tokenValidity = Duration(minutes: 5);
 
   final Map<String, _Account> _accounts = {};
   final Map<String, DateTime> _codeIssuedAt = {}; // by phone
@@ -40,7 +40,7 @@ class MockAuthRepository implements AuthRepository {
 
   bool _hasValidCode(String phone) {
     final issued = _codeIssuedAt[phone];
-    return issued != null && _now().difference(issued) < codeValidity;
+    return issued != null && _now().difference(issued) < _codeValidity;
   }
 
   void _issueCode(String phone) => _codeIssuedAt[phone] = _now();
@@ -120,7 +120,7 @@ class MockAuthRepository implements AuthRepository {
     final t = _resetTokens[token];
     final valid = t != null &&
         t.phone == phone &&
-        _now().difference(t.issuedAt) < tokenValidity;
+        _now().difference(t.issuedAt) < _tokenValidity;
     if (!valid) throw const ResetTokenInvalidException();
     final acc = _accounts[phone];
     if (acc == null) throw const ResetTokenInvalidException();

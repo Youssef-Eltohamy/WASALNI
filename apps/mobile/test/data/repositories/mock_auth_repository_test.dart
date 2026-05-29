@@ -20,6 +20,10 @@ void main() {
       expect(() => repo.login(phone: '+201000000000', password: 'nope'),
           throwsA(isA<WrongCredentialsException>()));
     });
+    test('unknown phone throws WrongCredentialsException', () {
+      expect(() => repo.login(phone: '+201111111111', password: '123456'),
+          throwsA(isA<WrongCredentialsException>()));
+    });
   });
 
   group('signup', () {
@@ -111,6 +115,30 @@ void main() {
       expect(
           () => repo.setNewPassword(
               phone: '+201000000000', token: token, newPassword: 'x'),
+          throwsA(isA<ResetTokenInvalidException>()));
+    });
+    test('resend after code expires succeeds', () async {
+      await repo.startReset(phone: '+201000000000');
+      clock = clock.add(const Duration(minutes: 3));
+      await expectLater(repo.startReset(phone: '+201000000000'), completes);
+    });
+    test('setNewPassword with a mismatched phone throws ResetTokenInvalidException',
+        () async {
+      await repo.startReset(phone: '+201000000000');
+      final token = await repo.verifyResetCode(phone: '+201000000000', code: '1234');
+      expect(
+          () => repo.setNewPassword(
+              phone: '+201999999999', token: token, newPassword: 'x'),
+          throwsA(isA<ResetTokenInvalidException>()));
+    });
+    test('setNewPassword token cannot be reused', () async {
+      await repo.startReset(phone: '+201000000000');
+      final token = await repo.verifyResetCode(phone: '+201000000000', code: '1234');
+      await repo.setNewPassword(
+          phone: '+201000000000', token: token, newPassword: 'p1');
+      expect(
+          () => repo.setNewPassword(
+              phone: '+201000000000', token: token, newPassword: 'p2'),
           throwsA(isA<ResetTokenInvalidException>()));
     });
   });
