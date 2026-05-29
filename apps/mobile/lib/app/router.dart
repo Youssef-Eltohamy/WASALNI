@@ -5,6 +5,8 @@ import '../data/repositories/listing_repository.dart';
 import '../data/repositories/product_repository.dart';
 import '../data/repositories/village_repository.dart';
 import '../features/account/account_placeholder.dart';
+import '../features/auth/view/phone_entry_screen.dart';
+import '../features/auth/view/otp_screen.dart';
 import '../features/categories/bloc/categories_bloc.dart';
 import '../features/categories/bloc/categories_event.dart';
 import '../features/categories/view/categories_screen.dart';
@@ -98,6 +100,20 @@ GoRouter createRouter() {
       GoRoute(
         path: '/cart',
         builder: (context, state) => const CartScreen(),
+      ),
+      GoRoute(
+        path: '/auth',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, String?>?;
+          return PhoneEntryScreen(from: extra?['from']);
+        },
+      ),
+      GoRoute(
+        path: '/auth/verify',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, String?>? ?? const {};
+          return OtpScreen(phone: extra['phone'] ?? '', from: extra['from']);
+        },
       ),
     ],
   );
