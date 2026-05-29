@@ -395,8 +395,10 @@ abstract class Listing with _$Listing {
 
 - [ ] **Step 7: Run code generation**
 
-Run: `dart run build_runner build --delete-conflicting-outputs`
-Expected: generates `*.freezed.dart` and `*.g.dart` for village/category/listing with no errors.
+Run: `dart run build_runner build --force-jit --delete-conflicting-outputs`
+Expected: generates `*.freezed.dart` for village/category/listing with no errors.
+
+> NOTE: The `--force-jit` flag is REQUIRED on this machine (Dart 3.10): the default AOT path fails with "'dart compile' does not support build hooks" because some transitive packages ship native build hooks. Always use `--force-jit` for build_runner here.
 
 - [ ] **Step 8: Run the test to verify it passes**
 
@@ -1508,10 +1510,10 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
 
 Run:
 ```bash
-dart run build_runner build --delete-conflicting-outputs
+dart run build_runner build --force-jit --delete-conflicting-outputs
 flutter test test/features/feed/feed_bloc_test.dart
 ```
-Expected: codegen succeeds; 3 tests PASS.
+Expected: codegen succeeds; 3 tests PASS. (`--force-jit` is required on this machine — see Task 3.)
 
 - [ ] **Step 7: Commit**
 
