@@ -21,11 +21,15 @@ abstract interface class AuthRepository {
   /// Throws [AccountNotFoundException] if there is no account.
   Future<void> startReset({required String phone});
 
-  /// Confirms reset with the OTP code, sets the new password, returns the profile.
-  /// Throws [OtpWrongCodeException] on a bad code.
-  Future<Profile> confirmReset({
+  /// Verifies a reset OTP and returns a short-lived reset token.
+  /// Throws [OtpWrongCodeException] on a bad code, [OtpExpiredException] if expired.
+  Future<String> verifyResetCode({required String phone, required String code});
+
+  /// Sets a new password using a reset token from [verifyResetCode].
+  /// Throws [ResetTokenInvalidException] if the token is bad or expired.
+  Future<Profile> setNewPassword({
     required String phone,
-    required String code,
+    required String token,
     required String newPassword,
   });
 }

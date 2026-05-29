@@ -23,3 +23,20 @@ class AccountNotFoundException extends AuthException {
 class OtpWrongCodeException extends AuthException {
   const OtpWrongCodeException() : super('الكود غلط، جرّب تاني');
 }
+
+/// OTP code is past its 2-minute validity window.
+class OtpExpiredException extends AuthException {
+  const OtpExpiredException() : super('الكود خلصت صلاحيته، اطلب كود جديد');
+}
+
+/// A still-valid code already exists for this phone — resend is blocked.
+class OtpResendTooSoonException extends AuthException {
+  const OtpResendTooSoonException()
+      : super('عندك كود لسه شغّال، استناه يخلص الأول');
+}
+
+/// Reset token is unknown, mismatched, or past its 5-minute validity.
+class ResetTokenInvalidException extends AuthException {
+  const ResetTokenInvalidException()
+      : super('انتهت الجلسة، ابدأ من أول رقم الموبايل');
+}
