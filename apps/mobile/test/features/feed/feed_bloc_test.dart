@@ -55,4 +55,15 @@ void main() {
     act: (bloc) => bloc.add(const FeedRequested(villageId: 'v_kafr')),
     expect: () => [const FeedState.loading(), const FeedState.noConnection()],
   );
+
+  blocTest<FeedBloc, FeedState>(
+    'emits [loading, error] on a generic RepositoryException',
+    build: () {
+      when(() => repo.getFeed(villageId: any(named: 'villageId'), kind: any(named: 'kind')))
+          .thenThrow(const ServerException());
+      return FeedBloc(repo);
+    },
+    act: (bloc) => bloc.add(const FeedRequested(villageId: 'v_kafr')),
+    expect: () => [const FeedState.loading(), isA<FeedError>()],
+  );
 }

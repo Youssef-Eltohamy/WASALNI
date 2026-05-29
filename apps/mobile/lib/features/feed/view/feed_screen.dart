@@ -21,7 +21,7 @@ class FeedScreen extends StatefulWidget {
 
 class _FeedScreenState extends State<FeedScreen> {
   List<Village> _villages = const [];
-  String _selectedVillageId = 'v_kafr';
+  String? _selectedVillageId;
 
   @override
   void initState() {
@@ -30,12 +30,14 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   Future<void> _loadVillages() async {
+    final bloc = context.read<FeedBloc>();
     final villages = await widget.villageRepository.getVillages();
-    if (!mounted) return;
+    if (!mounted || villages.isEmpty) return;
     setState(() {
       _villages = villages;
-      if (villages.isNotEmpty) _selectedVillageId = villages.first.id;
+      _selectedVillageId = villages.first.id;
     });
+    bloc.add(FeedRequested(villageId: villages.first.id));
   }
 
   void _selectVillage(String id) {
@@ -49,10 +51,10 @@ class _FeedScreenState extends State<FeedScreen> {
       appBar: AppBar(title: const Text('وصلني')),
       body: Column(
         children: [
-          if (_villages.isNotEmpty)
+          if (_villages.isNotEmpty && _selectedVillageId != null)
             _VillageFilter(
               villages: _villages,
-              selectedId: _selectedVillageId,
+              selectedId: _selectedVillageId!,
               onSelected: _selectVillage,
             ),
           Expanded(

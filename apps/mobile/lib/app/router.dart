@@ -6,7 +6,6 @@ import '../features/account/account_placeholder.dart';
 import '../features/categories/categories_placeholder.dart';
 import '../features/favorites/favorites_placeholder.dart';
 import '../features/feed/bloc/feed_bloc.dart';
-import '../features/feed/bloc/feed_event.dart';
 import '../features/feed/view/feed_screen.dart';
 import '../features/shell/scaffold_with_nav_bar.dart';
 import 'di.dart';
@@ -23,8 +22,7 @@ GoRouter createRouter() {
             GoRoute(
               path: '/feed',
               builder: (context, state) => BlocProvider(
-                create: (_) => FeedBloc(getIt<ListingRepository>())
-                  ..add(const FeedRequested(villageId: 'v_kafr')),
+                create: (_) => FeedBloc(getIt<ListingRepository>()),
                 child: FeedScreen(villageRepository: getIt<VillageRepository>()),
               ),
             ),
