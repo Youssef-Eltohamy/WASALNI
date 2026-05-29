@@ -27,7 +27,7 @@
 | State management | `flutter_bloc` | تفضيل المستخدم |
 | Navigation | `go_router` + ShellRoute | شِل الـ4 تابات + redirect/deep-links |
 | DI | `get_it` | نقطة تبديل mock ↔ supabase |
-| Models | `freezed` + `json_serializable` | unions للحالات + جاهز للـ JSON |
+| Models | `freezed` (json_serializable مؤجّل للباك) | unions للحالات؛ JSON يتضاف وقت ربط Supabase (تعارض حالي مع bloc_test + مش محتاجينه في الـ mock) |
 | الخط | **Cairo** مبنْدل | offline وأوثق |
 | Mock data | واقعية (كفر المقدام / تفهنا) | مراجعة UI ذات معنى + بذرة للـ DB |
 | **نموذج التسجيل** | **Self-signup + مساعدة الفريق الميداني، والكل يروح للسوبر أدمن يوافق/يرفض** | الفريق بيساعد على الأرض لكن نفس واجهة الـ self-signup؛ مفيش flow "claim" منفصل |
@@ -39,7 +39,7 @@
 ## 3. المعمارية
 
 ### 3.1 الباكدجات
-**أساسية:** `flutter_bloc`, `go_router`, `get_it`, `freezed`/`json_serializable` (+ `build_runner`), `cached_network_image`, `flutter_svg`.
+**أساسية:** `flutter_bloc`, `go_router`, `get_it`, `freezed` (+ `build_runner`؛ `json_serializable` مؤجّل للباك)، `cached_network_image`, `flutter_svg`.
 **حالات النظام (مضافة من دراسة الفجوات):**
 - `connectivity_plus` — كشف الاتصال (مع فحص وصول حقيقي)
 - `url_launcher` — واتساب / اتصال / خرايط / فتح الإعدادات
@@ -123,7 +123,7 @@ sealed class RepositoryException {
 - `ListingPlan`: `free | prime`
 - `AuthStatus` / حالات OTP (قسم 11)
 
-كلها `freezed` (immutable + copyWith + equality + fromJson/toJson؛ الـ JSON يتفعّل وقت Supabase).
+كلها `freezed` (immutable + copyWith + equality). الـ `fromJson/toJson` (json_serializable) **يتضاف في مرحلة الباك** وقت ربط Supabase — مش محتاجينه في الـ mock دلوقتي.
 
 ---
 

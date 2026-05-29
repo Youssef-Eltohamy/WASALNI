@@ -85,19 +85,20 @@ apps/mobile/
 
 Run (from `apps/mobile`):
 ```bash
-flutter pub add flutter_bloc go_router get_it connectivity_plus cached_network_image freezed_annotation json_annotation
-flutter pub add dev:build_runner dev:freezed dev:json_serializable dev:bloc_test dev:mocktail
+flutter pub add flutter_bloc go_router get_it connectivity_plus cached_network_image freezed_annotation
+flutter pub add dev:build_runner dev:freezed dev:bloc_test dev:mocktail
 ```
 Expected: `pubspec.yaml` gains the packages; `flutter pub get` runs automatically with no resolution errors.
 
-- [ ] **Step 2: Acquire the Cairo font files**
+> NOTE: `json_serializable`/`json_annotation` are intentionally **deferred to the backend phase**. The mock phase needs no JSON, and the latest `json_serializable` conflicts with `bloc_test` on the `analyzer` version. Models use `freezed` for `copyWith`/equality only (no `fromJson`/`toJson`) for now.
 
-Download the Cairo family from Google Fonts (https://fonts.google.com/specimen/Cairo → "Get font" → download zip). From the zip's `static/` folder, copy these three files into `apps/mobile/assets/fonts/`:
-- `Cairo-Regular.ttf`
-- `Cairo-SemiBold.ttf`
-- `Cairo-Bold.ttf`
+- [ ] **Step 2: Acquire the Cairo font (already done)**
 
-(If only variable `Cairo-VariableFont_*.ttf` is present, use it for all three weights by pointing each weight at the same file.)
+The Cairo **variable** font is already downloaded to `apps/mobile/assets/fonts/Cairo.ttf` (from google/fonts, contains the full weight axis 200–900). Flutter applies `FontWeight` via the variable wght axis, so a single asset covers all weights. Verify it exists:
+```bash
+ls -la apps/mobile/assets/fonts/Cairo.ttf
+```
+Expected: a ~600KB TrueType file.
 
 - [ ] **Step 3: Register font + assets in pubspec**
 
@@ -110,12 +111,7 @@ flutter:
   fonts:
     - family: Cairo
       fonts:
-        - asset: assets/fonts/Cairo-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/Cairo-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/Cairo-Bold.ttf
-          weight: 700
+        - asset: assets/fonts/Cairo.ttf
 ```
 
 - [ ] **Step 4: Verify resolution + analyze**
@@ -279,9 +275,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:wasalni/data/models/enums.dart';
 import 'package:wasalni/data/models/listing.dart';
 
-void main() {
-  test('Listing JSON round-trips and copyWith preserves fields', () {
-    final listing = Listing(
+Listing _build() => Listing(
       id: 'l1',
       kind: ListingKind.service,
       ownerId: 'u1',
@@ -290,22 +284,23 @@ void main() {
       name: 'سباك الحرفية',
       bio: 'سباكة وتسليك مجاري',
       phoneWhatsapp: '+201000000001',
-      logoUrl: null,
       status: ListingStatus.active,
       isVerified: true,
-      isFeatured: false,
       plan: ListingPlan.free,
-      isTemporarilyClosed: false,
       createdAt: DateTime.utc(2026, 1, 1),
     );
 
-    final json = listing.toJson();
-    final back = Listing.fromJson(json);
+void main() {
+  test('Listing has value equality and copyWith preserves other fields', () {
+    final a = _build();
+    final b = _build();
+    expect(a, b); // freezed value equality
 
-    expect(back, listing);
-    expect(back.kind, ListingKind.service);
-    expect(listing.copyWith(isVerified: false).isVerified, false);
-    expect(listing.copyWith(isVerified: false).name, 'سباك الحرفية');
+    final c = a.copyWith(isVerified: false);
+    expect(c.isVerified, false);
+    expect(c.name, 'سباك الحرفية');
+    expect(c, isNot(a));
+    expect(a.kind, ListingKind.service);
   });
 }
 ```
@@ -333,7 +328,6 @@ enum ListingPlan { free, prime }
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'village.freezed.dart';
-part 'village.g.dart';
 
 @freezed
 abstract class Village with _$Village {
@@ -343,8 +337,6 @@ abstract class Village with _$Village {
     required String governorate,
     required String markaz,
   }) = _Village;
-
-  factory Village.fromJson(Map<String, Object?> json) => _$VillageFromJson(json);
 }
 ```
 
@@ -356,7 +348,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'enums.dart';
 
 part 'category.freezed.dart';
-part 'category.g.dart';
 
 @freezed
 abstract class Category with _$Category {
@@ -368,8 +359,6 @@ abstract class Category with _$Category {
     required ListingKind kind,
     @Default(0) int sortOrder,
   }) = _Category;
-
-  factory Category.fromJson(Map<String, Object?> json) => _$CategoryFromJson(json);
 }
 ```
 
@@ -381,7 +370,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'enums.dart';
 
 part 'listing.freezed.dart';
-part 'listing.g.dart';
 
 @freezed
 abstract class Listing with _$Listing {
@@ -402,8 +390,6 @@ abstract class Listing with _$Listing {
     @Default(false) bool isTemporarilyClosed,
     required DateTime createdAt,
   }) = _Listing;
-
-  factory Listing.fromJson(Map<String, Object?> json) => _$ListingFromJson(json);
 }
 ```
 
