@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,7 +53,7 @@ class _OtpBodyState extends State<_OtpBody> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('تأكيد الرقم')),
-      // Navigate on success only. Listening (not Consumer) keeps the body static.
+      // Navigate on success only — listening (not building) keeps the body static.
       body: BlocListener<OtpCubit, OtpState>(
         listenWhen: (_, curr) => curr is OtpSuccess,
         listener: (context, state) {
@@ -73,11 +74,9 @@ class _OtpBodyState extends State<_OtpBody> {
               Text('(للتجربة: الكود ١٢٣٤)',
                   style: AppTextStyles.caption.copyWith(color: AppColors.accent)),
               const SizedBox(height: AppSpacing.xl),
-              // Field + verify button rebuild only when the state *type* changes
-              // (idle/sending/codeSent/verifying/wrongCode/...), NOT on every
-              // 1-second countdown tick — so typing never gets interrupted.
+              // Rebuilds only on real state changes (sending/verifying/error/...),
+              // never per-second — the countdown lives in its own widget below.
               BlocBuilder<OtpCubit, OtpState>(
-                buildWhen: (prev, curr) => prev.runtimeType != curr.runtimeType,
                 builder: (context, state) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -112,8 +111,8 @@ class _OtpBodyState extends State<_OtpBody> {
                 },
               ),
               const SizedBox(height: AppSpacing.md),
-              // Only this button watches the per-second countdown.
-              _ResendButton(phone: widget.phone),
+              // Self-contained: only THIS widget ticks every second.
+              _ResendCountdown(phone: widget.phone),
             ],
           ),
         ),
@@ -122,22 +121,57 @@ class _OtpBodyState extends State<_OtpBody> {
   }
 }
 
-class _ResendButton extends StatelessWidget {
-  const _ResendButton({required this.phone});
+/// Resend button with its own countdown timer. Counting down is a pure UI
+/// concern, so it lives here (local setState) — the OtpCubit never emits
+/// per-second states, so the rest of the screen never rebuilds for the timer.
+class _ResendCountdown extends StatefulWidget {
+  const _ResendCountdown({required this.phone});
   final String phone;
+  @override
+  State<_ResendCountdown> createState() => _ResendCountdownState();
+}
+
+class _ResendCountdownState extends State<_ResendCountdown> {
+  static const _start = 30;
+  int _seconds = _start;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startCountdown();
+  }
+
+  void _startCountdown() {
+    _timer?.cancel();
+    setState(() => _seconds = _start);
+    _timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (_seconds <= 1) {
+        t.cancel();
+        setState(() => _seconds = 0);
+      } else {
+        setState(() => _seconds--);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<OtpCubit, OtpState>(
-      builder: (context, state) {
-        final canResend =
-            state is! OtpCodeSent || state.resendSeconds <= 0;
-        final seconds = state is OtpCodeSent ? state.resendSeconds : 0;
-        return TextButton(
-          onPressed: canResend ? () => context.read<OtpCubit>().resend(phone) : null,
-          child: Text(canResend ? 'ابعت الكود تاني' : 'ابعت تاني بعد ($seconds)'),
-        );
-      },
+    final canResend = _seconds <= 0;
+    return TextButton(
+      onPressed: canResend
+          ? () {
+              context.read<OtpCubit>().resend(widget.phone);
+              _startCountdown();
+            }
+          : null,
+      child: Text(canResend ? 'ابعت الكود تاني' : 'ابعت تاني بعد ($_seconds)'),
     );
   }
 }
