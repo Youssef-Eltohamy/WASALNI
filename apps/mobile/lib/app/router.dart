@@ -21,6 +21,7 @@ import '../features/cart/view/cart_screen.dart';
 import '../features/products/view/product_detail_screen.dart';
 import '../features/search/bloc/search_bloc.dart';
 import '../features/search/view/search_screen.dart';
+import '../features/auth/view/login_screen.dart';
 import '../features/shell/scaffold_with_nav_bar.dart';
 import 'di.dart';
 
@@ -103,6 +104,13 @@ GoRouter createRouter() {
       GoRoute(
         path: '/cart',
         builder: (context, state) => const CartScreen(),
+      ),
+      GoRoute(
+        path: '/auth',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, String?>?;
+          return LoginScreen(from: extra?['from']);
+        },
       ),
     ],
   );
