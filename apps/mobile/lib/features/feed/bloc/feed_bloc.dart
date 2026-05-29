@@ -14,10 +14,12 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
   final ListingRepository _repo;
   String? _villageId;
   ListingKind? _kind;
+  String? _categoryId;
 
   Future<void> _onRequested(FeedRequested e, Emitter<FeedState> emit) async {
     _villageId = e.villageId;
     _kind = e.kind;
+    _categoryId = e.categoryId;
     await _load(emit);
   }
 
@@ -28,7 +30,11 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
   Future<void> _load(Emitter<FeedState> emit) async {
     emit(const FeedState.loading());
     try {
-      final items = await _repo.getFeed(villageId: _villageId!, kind: _kind);
+      final items = await _repo.getFeed(
+        villageId: _villageId!,
+        kind: _kind,
+        categoryId: _categoryId,
+      );
       emit(items.isEmpty
           ? const FeedState.empty()
           : FeedState.loaded(items, villageId: _villageId, kind: _kind));

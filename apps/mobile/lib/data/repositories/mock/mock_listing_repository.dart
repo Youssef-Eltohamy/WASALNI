@@ -10,12 +10,17 @@ class MockListingRepository implements ListingRepository {
   final Duration latency;
 
   @override
-  Future<List<Listing>> getFeed({required String villageId, ListingKind? kind}) async {
+  Future<List<Listing>> getFeed({
+    required String villageId,
+    ListingKind? kind,
+    String? categoryId,
+  }) async {
     await Future<void>.delayed(latency);
     final items = MockData.listings.where((l) =>
         l.villageId == villageId &&
         l.status == ListingStatus.active &&
-        (kind == null || l.kind == kind)).toList();
+        (kind == null || l.kind == kind) &&
+        (categoryId == null || l.categoryId == categoryId)).toList();
     // Featured first, then newest.
     items.sort((a, b) {
       if (a.isFeatured != b.isFeatured) return a.isFeatured ? -1 : 1;

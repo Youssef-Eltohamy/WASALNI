@@ -18,6 +18,13 @@ void main() {
     expect(result.every((l) => l.kind == ListingKind.shop), true);
   });
 
+  test('getFeed filters by categoryId', () async {
+    final repo = MockListingRepository();
+    final result = await repo.getFeed(villageId: 'v_kafr', categoryId: 'cat_plumb');
+    expect(result, isNotEmpty);
+    expect(result.every((l) => l.categoryId == 'cat_plumb'), true);
+  });
+
   test('getById throws NotFoundException for unknown id', () async {
     final repo = MockListingRepository();
     expect(() => repo.getById('nope'), throwsA(isA<NotFoundException>()));

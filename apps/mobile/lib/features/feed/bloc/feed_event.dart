@@ -6,9 +6,10 @@ sealed class FeedEvent {
 }
 
 class FeedRequested extends FeedEvent {
-  const FeedRequested({required this.villageId, this.kind});
+  const FeedRequested({required this.villageId, this.kind, this.categoryId});
   final String villageId;
   final ListingKind? kind;
+  final String? categoryId;
 }
 
 class FeedRefreshed extends FeedEvent {
