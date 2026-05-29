@@ -2,13 +2,17 @@ import 'package:get_it/get_it.dart';
 import '../core/connectivity/connectivity_service.dart';
 import '../data/repositories/category_repository.dart';
 import '../data/repositories/listing_repository.dart';
+import '../data/repositories/order_repository.dart';
 import '../data/repositories/product_repository.dart';
 import '../data/repositories/village_repository.dart';
 import '../data/repositories/mock/mock_category_repository.dart';
 import '../data/repositories/mock/mock_listing_repository.dart';
+import '../data/repositories/mock/mock_order_repository.dart';
 import '../data/repositories/mock/mock_product_repository.dart';
 import '../data/repositories/mock/mock_village_repository.dart';
 import '../features/cart/bloc/cart_cubit.dart';
+import '../features/cart/cart_sender.dart';
+import '../features/cart/outbox_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -21,5 +25,8 @@ void setupDi() {
     ..registerLazySingleton<CategoryRepository>(MockCategoryRepository.new)
     ..registerLazySingleton<ProductRepository>(MockProductRepository.new)
     ..registerLazySingleton<ConnectivityService>(ConnectivityServiceImpl.new)
-    ..registerLazySingleton<CartCubit>(CartCubit.new);
+    ..registerLazySingleton<CartCubit>(CartCubit.new)
+    ..registerLazySingleton<OrderRepository>(MockOrderRepository.new)
+    ..registerLazySingleton<OutboxService>(() => OutboxService(getIt<OrderRepository>()))
+    ..registerLazySingleton<CartSender>(() => CartSender(getIt<OrderRepository>(), getIt<OutboxService>()));
 }
