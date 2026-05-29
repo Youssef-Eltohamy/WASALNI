@@ -10,6 +10,7 @@ import '../data/repositories/mock/mock_listing_repository.dart';
 import '../data/repositories/mock/mock_order_repository.dart';
 import '../data/repositories/mock/mock_product_repository.dart';
 import '../data/repositories/mock/mock_village_repository.dart';
+import '../features/auth/bloc/session_cubit.dart';
 import '../features/cart/bloc/cart_cubit.dart';
 import '../features/cart/cart_sender.dart';
 import '../features/cart/outbox_service.dart';
@@ -25,6 +26,7 @@ void setupDi() {
     ..registerLazySingleton<CategoryRepository>(MockCategoryRepository.new)
     ..registerLazySingleton<ProductRepository>(MockProductRepository.new)
     ..registerLazySingleton<ConnectivityService>(ConnectivityServiceImpl.new)
+    ..registerLazySingleton<SessionCubit>(SessionCubit.new)
     ..registerLazySingleton<CartCubit>(CartCubit.new)
     ..registerLazySingleton<OrderRepository>(MockOrderRepository.new)
     ..registerLazySingleton<OutboxService>(() => OutboxService(getIt<OrderRepository>()))
