@@ -7,6 +7,7 @@ import '../../../core/widgets/error_view.dart';
 import '../../../core/widgets/loading_view.dart';
 import '../../../data/models/village.dart';
 import '../../../data/repositories/village_repository.dart';
+import '../../cart/widgets/cart_icon_button.dart';
 import '../bloc/feed_bloc.dart';
 import '../bloc/feed_event.dart';
 import '../bloc/feed_state.dart';
@@ -56,6 +57,7 @@ class _FeedScreenState extends State<FeedScreen> {
             icon: const Icon(Icons.search),
             onPressed: () => context.push('/search'),
           ),
+          const CartIconButton(),
         ],
       ),
       body: Column(

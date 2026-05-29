@@ -5,6 +5,7 @@ import 'package:wasalni/data/repositories/listing_repository.dart';
 import 'package:wasalni/data/repositories/village_repository.dart';
 import 'package:wasalni/data/repositories/mock/mock_listing_repository.dart';
 import 'package:wasalni/data/repositories/mock/mock_village_repository.dart';
+import 'package:wasalni/features/cart/bloc/cart_cubit.dart';
 import 'package:wasalni/features/feed/bloc/feed_bloc.dart';
 import 'package:wasalni/features/feed/bloc/feed_event.dart';
 import 'package:wasalni/features/feed/view/feed_screen.dart';
@@ -17,8 +18,12 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       home: Directionality(
         textDirection: TextDirection.rtl,
-        child: BlocProvider(
-          create: (_) => FeedBloc(listingRepo)..add(const FeedRequested(villageId: 'v_kafr')),
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+                create: (_) => FeedBloc(listingRepo)..add(const FeedRequested(villageId: 'v_kafr'))),
+            BlocProvider(create: (_) => CartCubit()),
+          ],
           child: FeedScreen(villageRepository: villageRepo),
         ),
       ),
