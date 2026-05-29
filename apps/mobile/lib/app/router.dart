@@ -1,0 +1,32 @@
+import 'package:go_router/go_router.dart';
+import '../features/account/account_placeholder.dart';
+import '../features/categories/categories_placeholder.dart';
+import '../features/favorites/favorites_placeholder.dart';
+import '../features/feed/view/feed_screen.dart';
+import '../features/shell/scaffold_with_nav_bar.dart';
+
+GoRouter createRouter() {
+  return GoRouter(
+    initialLocation: '/feed',
+    routes: [
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            ScaffoldWithNavBar(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(routes: [
+            GoRoute(path: '/feed', builder: (context, state) => const FeedScreen()),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(path: '/categories', builder: (context, state) => const CategoriesPlaceholder()),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(path: '/favorites', builder: (context, state) => const FavoritesPlaceholder()),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(path: '/account', builder: (context, state) => const AccountPlaceholder()),
+          ]),
+        ],
+      ),
+    ],
+  );
+}
