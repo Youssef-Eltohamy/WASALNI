@@ -24,10 +24,12 @@ class OtpCubit extends Cubit<OtpState> {
   Future<void> resend(String phone) => requestCode(phone);
 
   Future<void> verify({required String phone, required String code}) async {
+    // Stop the resend countdown while verifying so its ticks can't overwrite
+    // the verifying/result state (the user can resend again after a failure).
+    _timer?.cancel();
     emit(const OtpState.verifying());
     try {
       final profile = await _repo.verifyOtp(phone: phone, code: code);
-      _timer?.cancel();
       emit(OtpState.success(profile));
     } on AuthException catch (e) {
       _mapError(e);

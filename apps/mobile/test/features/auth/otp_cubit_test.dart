@@ -69,4 +69,20 @@ void main() {
     act: (c) => c.verify(phone: '+201000000000', code: '9999'),
     expect: () => [isA<OtpVerifying>(), isA<OtpRateLimited>()],
   );
+
+  blocTest<OtpCubit, OtpState>(
+    'resend countdown does not overwrite a wrong-code error after a tick',
+    build: () {
+      when(() => repo.requestOtp(any())).thenAnswer((_) async {});
+      when(() => repo.verifyOtp(phone: any(named: 'phone'), code: any(named: 'code')))
+          .thenThrow(const OtpWrongCodeException());
+      return OtpCubit(repo);
+    },
+    act: (c) async {
+      await c.requestCode('+201000000000'); // starts the 30s countdown
+      await c.verify(phone: '+201000000000', code: '5555'); // wrong → cancels timer
+    },
+    wait: const Duration(milliseconds: 1200), // let a would-be tick fire
+    verify: (c) => expect(c.state, isA<OtpWrongCode>()),
+  );
 }
