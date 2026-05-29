@@ -13,6 +13,7 @@ import '../../../data/repositories/product_repository.dart';
 import '../bloc/cart_cubit.dart';
 import '../cart_sender.dart';
 import '../widgets/shop_cart_card.dart';
+import '../../auth/bloc/session_cubit.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key, this.productRepository, this.sender, this.userName = ''});
@@ -54,7 +55,10 @@ class _CartScreenState extends State<CartScreen> {
     final messenger = ScaffoldMessenger.of(context);
     final isOnline = context.read<ConnectivityCubit>().state == ConnectivityStatus.online;
 
-    final outcome = await sender.send(shop, userName: widget.userName, isOnline: isOnline);
+    final name = widget.userName.isNotEmpty
+        ? widget.userName
+        : context.read<SessionCubit>().displayName;
+    final outcome = await sender.send(shop, userName: name, isOnline: isOnline);
     if (!mounted) return;
     switch (outcome) {
       case SendOutcome.sent:

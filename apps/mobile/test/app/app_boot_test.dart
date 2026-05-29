@@ -29,6 +29,7 @@ void main() {
 
     await tester.tap(find.text('حسابي'));
     await tester.pumpAndSettle();
-    expect(find.text('حسابي — قريباً'), findsOneWidget);
+    // AccountScreen: guest state shows the sign-in prompt
+    expect(find.text('تسجيل الدخول'), findsOneWidget);
   });
 }

@@ -4,7 +4,7 @@ import '../data/repositories/category_repository.dart';
 import '../data/repositories/listing_repository.dart';
 import '../data/repositories/product_repository.dart';
 import '../data/repositories/village_repository.dart';
-import '../features/account/account_placeholder.dart';
+import '../features/account/view/account_screen.dart';
 import '../features/auth/view/phone_entry_screen.dart';
 import '../features/auth/view/otp_screen.dart';
 import '../features/categories/bloc/categories_bloc.dart';
@@ -29,6 +29,11 @@ import 'di.dart';
 GoRouter createRouter() {
   return GoRouter(
     initialLocation: '/feed',
+    redirect: (context, state) {
+      // Future protected routes can be gated here using getIt<SessionCubit>().isAuthenticated
+      // and redirect to '/auth' with extra {'from': state.matchedLocation}. No-op for now.
+      return null;
+    },
     routes: [
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
@@ -57,7 +62,7 @@ GoRouter createRouter() {
             GoRoute(path: '/favorites', builder: (context, state) => const FavoritesPlaceholder()),
           ]),
           StatefulShellBranch(routes: [
-            GoRoute(path: '/account', builder: (context, state) => const AccountPlaceholder()),
+            GoRoute(path: '/account', builder: (context, state) => const AccountScreen()),
           ]),
         ],
       ),

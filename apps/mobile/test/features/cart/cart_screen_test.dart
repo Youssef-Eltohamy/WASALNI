@@ -7,6 +7,7 @@ import 'package:wasalni/core/connectivity/connectivity_service.dart';
 import 'package:wasalni/data/models/product.dart';
 import 'package:wasalni/data/repositories/order_repository.dart';
 import 'package:wasalni/data/repositories/product_repository.dart';
+import 'package:wasalni/features/auth/bloc/session_cubit.dart';
 import 'package:wasalni/features/cart/bloc/cart_cubit.dart';
 import 'package:wasalni/features/cart/cart_sender.dart';
 import 'package:wasalni/features/cart/outbox_service.dart';
@@ -31,6 +32,7 @@ Widget _host({required CartCubit cart, required ProductRepository repo, required
       providers: [
         BlocProvider<CartCubit>.value(value: cart),
         BlocProvider<ConnectivityCubit>(create: (_) => ConnectivityCubit(_FakeConn())),
+        BlocProvider<SessionCubit>(create: (_) => SessionCubit()),
       ],
       child: CartScreen(productRepository: repo, sender: sender),
     ),
