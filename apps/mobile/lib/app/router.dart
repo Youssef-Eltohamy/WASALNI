@@ -17,6 +17,7 @@ import '../features/listing_detail/bloc/listing_detail_event.dart';
 import '../features/listing_detail/view/listing_detail_screen.dart';
 import '../features/products/bloc/product_detail_bloc.dart';
 import '../features/products/bloc/product_detail_event.dart';
+import '../features/cart/view/cart_screen.dart';
 import '../features/products/view/product_detail_screen.dart';
 import '../features/search/bloc/search_bloc.dart';
 import '../features/search/view/search_screen.dart';
@@ -93,6 +94,10 @@ GoRouter createRouter() {
           )..add(ProductDetailRequested(state.pathParameters['id']!)),
           child: const ProductDetailScreen(),
         ),
+      ),
+      GoRoute(
+        path: '/cart',
+        builder: (context, state) => const CartScreen(),
       ),
     ],
   );

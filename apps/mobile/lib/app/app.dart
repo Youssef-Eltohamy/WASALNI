@@ -5,6 +5,7 @@ import '../core/connectivity/connectivity_cubit.dart';
 import '../core/connectivity/connectivity_service.dart';
 import '../core/theme/app_theme.dart';
 import '../features/cart/bloc/cart_cubit.dart';
+import '../features/cart/outbox_service.dart';
 import 'di.dart';
 import 'router.dart';
 
@@ -24,20 +25,28 @@ class _AppState extends State<App> {
         BlocProvider(create: (_) => ConnectivityCubit(getIt<ConnectivityService>())..init()),
         BlocProvider<CartCubit>.value(value: getIt<CartCubit>()),
       ],
-      child: MaterialApp.router(
-        title: 'وصلني',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.light(),
-        routerConfig: _router,
-        locale: const Locale('ar', 'EG'),
-        supportedLocales: const [Locale('ar', 'EG')],
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        builder: (context, child) =>
-            Directionality(textDirection: TextDirection.rtl, child: child!),
+      child: BlocListener<ConnectivityCubit, ConnectivityStatus>(
+        listenWhen: (prev, curr) =>
+            prev == ConnectivityStatus.offline && curr == ConnectivityStatus.online,
+        listener: (context, _) {
+          final outbox = getIt<OutboxService>();
+          if (outbox.hasPending) outbox.flush();
+        },
+        child: MaterialApp.router(
+          title: 'وصلني',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.light(),
+          routerConfig: _router,
+          locale: const Locale('ar', 'EG'),
+          supportedLocales: const [Locale('ar', 'EG')],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          builder: (context, child) =>
+              Directionality(textDirection: TextDirection.rtl, child: child!),
+        ),
       ),
     );
   }
