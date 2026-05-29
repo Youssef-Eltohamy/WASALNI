@@ -7,6 +7,7 @@ import '../features/account/account_placeholder.dart';
 import '../features/categories/bloc/categories_bloc.dart';
 import '../features/categories/bloc/categories_event.dart';
 import '../features/categories/view/categories_screen.dart';
+import '../features/categories/view/category_listings_screen.dart';
 import '../features/favorites/favorites_placeholder.dart';
 import '../features/feed/bloc/feed_bloc.dart';
 import '../features/feed/view/feed_screen.dart';
@@ -47,6 +48,17 @@ GoRouter createRouter() {
             GoRoute(path: '/account', builder: (context, state) => const AccountPlaceholder()),
           ]),
         ],
+      ),
+      GoRoute(
+        path: '/category/:id',
+        builder: (context, state) => BlocProvider(
+          create: (_) => FeedBloc(getIt<ListingRepository>()),
+          child: CategoryListingsScreen(
+            categoryId: state.pathParameters['id']!,
+            categoryName: state.extra as String? ?? 'التصنيف',
+            villageRepository: getIt<VillageRepository>(),
+          ),
+        ),
       ),
     ],
   );
