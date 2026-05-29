@@ -29,4 +29,18 @@ void main() {
     final repo = MockListingRepository();
     expect(() => repo.getById('nope'), throwsA(isA<NotFoundException>()));
   });
+
+  test('search finds active listings by name in the village', () async {
+    final repo = MockListingRepository();
+    final result = await repo.search(villageId: 'v_kafr', query: 'سباك');
+    expect(result, isNotEmpty);
+    expect(result.any((l) => l.name == 'سباك الأسطى محمود'), true);
+    expect(result.every((l) => l.villageId == 'v_kafr'), true);
+  });
+
+  test('search returns empty when nothing matches', () async {
+    final repo = MockListingRepository();
+    final result = await repo.search(villageId: 'v_kafr', query: 'zzzznope');
+    expect(result, isEmpty);
+  });
 }

@@ -11,4 +11,7 @@ abstract interface class ListingRepository {
   });
 
   Future<Listing> getById(String id);
+
+  /// Active listings in [villageId] whose name or description contains [query].
+  Future<List<Listing>> search({required String villageId, required String query});
 }

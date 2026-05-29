@@ -36,4 +36,15 @@ class MockListingRepository implements ListingRepository {
     if (match.isEmpty) throw const NotFoundException();
     return match.first;
   }
+
+  @override
+  Future<List<Listing>> search({required String villageId, required String query}) async {
+    await Future<void>.delayed(latency);
+    final q = query.trim().toLowerCase();
+    if (q.isEmpty) return const [];
+    return MockData.listings.where((l) =>
+        l.villageId == villageId &&
+        l.status == ListingStatus.active &&
+        (l.name.toLowerCase().contains(q) || l.bio.toLowerCase().contains(q))).toList();
+  }
 }
