@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import '../core/connectivity/connectivity_cubit.dart';
 import '../core/connectivity/connectivity_service.dart';
 import '../core/theme/app_theme.dart';
+import '../features/cart/bloc/cart_cubit.dart';
 import 'di.dart';
 import 'router.dart';
 
@@ -18,8 +19,11 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ConnectivityCubit(getIt<ConnectivityService>())..init(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => ConnectivityCubit(getIt<ConnectivityService>())..init()),
+        BlocProvider<CartCubit>.value(value: getIt<CartCubit>()),
+      ],
       child: MaterialApp.router(
         title: 'وصلني',
         debugShowCheckedModeBanner: false,

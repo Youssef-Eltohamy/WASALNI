@@ -8,6 +8,7 @@ import '../data/repositories/mock/mock_category_repository.dart';
 import '../data/repositories/mock/mock_listing_repository.dart';
 import '../data/repositories/mock/mock_product_repository.dart';
 import '../data/repositories/mock/mock_village_repository.dart';
+import '../features/cart/bloc/cart_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -19,5 +20,6 @@ void setupDi() {
     ..registerLazySingleton<VillageRepository>(MockVillageRepository.new)
     ..registerLazySingleton<CategoryRepository>(MockCategoryRepository.new)
     ..registerLazySingleton<ProductRepository>(MockProductRepository.new)
-    ..registerLazySingleton<ConnectivityService>(ConnectivityServiceImpl.new);
+    ..registerLazySingleton<ConnectivityService>(ConnectivityServiceImpl.new)
+    ..registerLazySingleton<CartCubit>(CartCubit.new);
 }
