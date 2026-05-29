@@ -1,9 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../data/repositories/category_repository.dart';
 import '../data/repositories/listing_repository.dart';
 import '../data/repositories/village_repository.dart';
 import '../features/account/account_placeholder.dart';
-import '../features/categories/categories_placeholder.dart';
+import '../features/categories/bloc/categories_bloc.dart';
+import '../features/categories/bloc/categories_event.dart';
+import '../features/categories/view/categories_screen.dart';
 import '../features/favorites/favorites_placeholder.dart';
 import '../features/feed/bloc/feed_bloc.dart';
 import '../features/feed/view/feed_screen.dart';
@@ -28,7 +31,14 @@ GoRouter createRouter() {
             ),
           ]),
           StatefulShellBranch(routes: [
-            GoRoute(path: '/categories', builder: (context, state) => const CategoriesPlaceholder()),
+            GoRoute(
+              path: '/categories',
+              builder: (context, state) => BlocProvider(
+                create: (_) => CategoriesBloc(getIt<CategoryRepository>())
+                  ..add(const CategoriesRequested()),
+                child: const CategoriesScreen(),
+              ),
+            ),
           ]),
           StatefulShellBranch(routes: [
             GoRoute(path: '/favorites', builder: (context, state) => const FavoritesPlaceholder()),
