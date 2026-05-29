@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../data/repositories/category_repository.dart';
 import '../data/repositories/listing_repository.dart';
+import '../data/repositories/product_repository.dart';
 import '../data/repositories/village_repository.dart';
 import '../features/account/account_placeholder.dart';
 import '../features/categories/bloc/categories_bloc.dart';
@@ -14,6 +15,9 @@ import '../features/feed/view/feed_screen.dart';
 import '../features/listing_detail/bloc/listing_detail_bloc.dart';
 import '../features/listing_detail/bloc/listing_detail_event.dart';
 import '../features/listing_detail/view/listing_detail_screen.dart';
+import '../features/products/bloc/product_detail_bloc.dart';
+import '../features/products/bloc/product_detail_event.dart';
+import '../features/products/view/product_detail_screen.dart';
 import '../features/search/bloc/search_bloc.dart';
 import '../features/search/view/search_screen.dart';
 import '../features/shell/scaffold_with_nav_bar.dart';
@@ -78,6 +82,16 @@ GoRouter createRouter() {
           create: (_) => ListingDetailBloc(getIt<ListingRepository>())
             ..add(ListingDetailRequested(state.pathParameters['id']!)),
           child: const ListingDetailScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/product/:id',
+        builder: (context, state) => BlocProvider(
+          create: (_) => ProductDetailBloc(
+            getIt<ProductRepository>(),
+            getIt<ListingRepository>(),
+          )..add(ProductDetailRequested(state.pathParameters['id']!)),
+          child: const ProductDetailScreen(),
         ),
       ),
     ],
