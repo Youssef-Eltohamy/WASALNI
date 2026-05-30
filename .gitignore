@@ -76,3 +76,6 @@ node_modules/
 # ===== return_to_zero tooling / temp previews =====
 return_to_zero/icon_tools/node_modules/
 return_to_zero/icon_tools/*_preview.png
+
+# Playwright preview screenshots (local only)
+.playwright-mcp/
