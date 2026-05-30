@@ -4,14 +4,15 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/empty_view.dart';
 import '../../../core/widgets/error_view.dart';
-import '../../../core/widgets/loading_view.dart';
 import '../../../data/models/village.dart';
 import '../../../data/repositories/village_repository.dart';
 import '../../cart/widgets/cart_icon_button.dart';
+import '../../../core/layout/responsive.dart';
 import '../bloc/feed_bloc.dart';
 import '../bloc/feed_event.dart';
 import '../bloc/feed_state.dart';
 import '../widgets/listing_card.dart';
+import '../widgets/listing_grid_skeleton.dart';
 
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key, required this.villageRepository});
@@ -74,7 +75,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   context.read<FeedBloc>().add(const FeedRefreshed()),
               child: BlocBuilder<FeedBloc, FeedState>(
                 builder: (context, state) => switch (state) {
-                  FeedLoading() => const LoadingView(),
+                  FeedLoading() => const ListingGridSkeleton(),
                   FeedEmpty() => const EmptyView(
                       message: 'مفيش نشاطات في القرية دي لسه',
                     ),
@@ -89,18 +90,22 @@ class _FeedScreenState extends State<FeedScreen> {
                       onRetry: () =>
                           context.read<FeedBloc>().add(const FeedRefreshed()),
                     ),
-                  FeedLoaded(:final listings) => GridView.builder(
-                      padding: const EdgeInsets.all(AppSpacing.md),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: AppSpacing.md,
-                        mainAxisSpacing: AppSpacing.md,
-                        childAspectRatio: 0.72,
+                  FeedLoaded(:final listings) => LayoutBuilder(
+                      builder: (context, constraints) => GridView.builder(
+                        padding: const EdgeInsets.all(AppSpacing.md),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount:
+                              Responsive.gridColumns(constraints.maxWidth),
+                          crossAxisSpacing: AppSpacing.md,
+                          mainAxisSpacing: AppSpacing.md,
+                          childAspectRatio: 0.72,
+                        ),
+                        itemCount: listings.length,
+                        itemBuilder: (ctx, idx) => ListingCard(
+                            listing: listings[idx],
+                            onTap: () =>
+                                ctx.push('/listing/${listings[idx].id}')),
                       ),
-                      itemCount: listings.length,
-                      itemBuilder: (ctx, idx) =>
-                          ListingCard(listing: listings[idx], onTap: () => ctx.push('/listing/${listings[idx].id}')),
                     ),
                 },
               ),

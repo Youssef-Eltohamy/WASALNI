@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../app/di.dart';
+import '../../../core/layout/responsive.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -81,7 +82,7 @@ class _SignupBodyState extends State<_SignupBody> {
         builder: (context, state) {
           final onCode = state is SignupCodeSent || state is SignupVerifying;
           return ListView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            padding: Responsive.formPadding(context),
             children: [
               const SizedBox(height: AppSpacing.md),
               Text(onCode ? 'أكّد رقمك' : 'اعمل حساب جديد', style: AppTextStyles.headline),

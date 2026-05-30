@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/listing_visuals.dart';
+import '../../../data/models/enums.dart';
 import '../../../data/models/listing.dart';
 
 class ListingCard extends StatelessWidget {
@@ -12,6 +14,7 @@ class ListingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isOpen = !listing.isTemporarilyClosed;
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -21,27 +24,32 @@ class ListingCard extends StatelessWidget {
           children: [
             AspectRatio(
               aspectRatio: 16 / 10,
-              child: _Image(url: listing.logoUrl),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  _Cover(url: listing.logoUrl, kind: listing.kind),
+                  if (listing.isVerified)
+                    const PositionedDirectional(
+                      top: AppSpacing.sm,
+                      start: AppSpacing.sm,
+                      child: _VerifiedBadge(),
+                    ),
+                  PositionedDirectional(
+                    bottom: AppSpacing.sm,
+                    end: AppSpacing.sm,
+                    child: _StatusBadge(isOpen: isOpen),
+                  ),
+                ],
+              ),
             ),
             Padding(
               padding: const EdgeInsetsDirectional.all(AppSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(listing.name,
-                            style: AppTextStyles.label,
-                            maxLines: 1, overflow: TextOverflow.ellipsis),
-                      ),
-                      if (listing.isVerified)
-                        const Padding(
-                          padding: EdgeInsetsDirectional.only(start: AppSpacing.xs),
-                          child: Icon(Icons.verified, size: 16, color: AppColors.verified),
-                        ),
-                    ],
-                  ),
+                  Text(listing.name,
+                      style: AppTextStyles.label,
+                      maxLines: 1, overflow: TextOverflow.ellipsis),
                   const SizedBox(height: AppSpacing.xs),
                   Text(listing.bio,
                       style: AppTextStyles.caption,
@@ -56,14 +64,20 @@ class ListingCard extends StatelessWidget {
   }
 }
 
-class _Image extends StatelessWidget {
-  const _Image({this.url});
+/// Cover image, or a coloured smart placeholder (gradient + kind icon).
+class _Cover extends StatelessWidget {
+  const _Cover({this.url, required this.kind});
   final String? url;
+  final ListingKind kind;
+
   @override
   Widget build(BuildContext context) {
-    final placeholder = Container(
-      color: AppColors.border,
-      child: const Icon(Icons.storefront, size: 40, color: AppColors.textMuted),
+    final placeholder = DecoratedBox(
+      decoration: const BoxDecoration(gradient: ListingVisuals.placeholderGradient),
+      child: Center(
+        child: Icon(ListingVisuals.icon(kind),
+            size: 44, color: Colors.white.withValues(alpha: 0.9)),
+      ),
     );
     if (url == null || url!.isEmpty) return placeholder;
     return CachedNetworkImage(
@@ -71,6 +85,52 @@ class _Image extends StatelessWidget {
       fit: BoxFit.cover,
       placeholder: (context, url) => placeholder,
       errorWidget: (context, url, error) => placeholder,
+    );
+  }
+}
+
+/// ✓ موثّق — white pill on the cover.
+class _VerifiedBadge extends StatelessWidget {
+  const _VerifiedBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsetsDirectional.symmetric(
+          horizontal: AppSpacing.sm, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.verified, size: 14, color: AppColors.verified),
+          const SizedBox(width: AppSpacing.xs),
+          Text('موثّق',
+              style: AppTextStyles.labelSmall.copyWith(color: AppColors.verified)),
+        ],
+      ),
+    );
+  }
+}
+
+/// ● مفتوح / مقفول — coloured status pill on the cover.
+class _StatusBadge extends StatelessWidget {
+  const _StatusBadge({required this.isOpen});
+  final bool isOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsetsDirectional.symmetric(
+          horizontal: AppSpacing.sm, vertical: 2),
+      decoration: BoxDecoration(
+        color: isOpen ? AppColors.success : AppColors.textMuted,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+      ),
+      child: Text(isOpen ? 'مفتوح' : 'مقفول',
+          style: AppTextStyles.labelSmall.copyWith(color: Colors.white)),
     );
   }
 }
