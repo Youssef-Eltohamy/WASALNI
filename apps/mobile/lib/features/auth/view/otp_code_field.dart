@@ -12,7 +12,7 @@ class OtpCodeField extends StatefulWidget {
     required this.controller,
     required this.onResend,
     this.errorText,
-    this.startSeconds = 30,
+    this.startSeconds = 120,
   });
 
   final TextEditingController controller;
