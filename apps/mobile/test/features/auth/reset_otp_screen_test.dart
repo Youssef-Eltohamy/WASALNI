@@ -52,6 +52,19 @@ void main() {
     expect(find.text('reset stub'), findsOneWidget);
   });
 
+  testWidgets('after verifying, the OTP screen is replaced (cannot go back)',
+      (tester) async {
+    final router = makeRouter();
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).first, '1234');
+    await tester.tap(find.text('تأكيد الكود'));
+    await tester.pumpAndSettle();
+    expect(find.text('reset stub'), findsOneWidget);
+    // pushReplacement removed the OTP route, so there is nothing to pop back to.
+    expect(router.canPop(), isFalse);
+  });
+
   testWidgets('wrong code shows the error and stays', (tester) async {
     await tester.pumpWidget(app());
     await tester.pumpAndSettle();

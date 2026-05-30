@@ -48,7 +48,9 @@ class _BodyState extends State<_Body> {
       body: BlocConsumer<ResetOtpCubit, ResetOtpState>(
         listener: (context, state) {
           if (state is ResetOtpVerified) {
-            context.push('/auth/forgot/reset', extra: <String, String?>{
+            // Replace (not push) so the user can't go back to this OTP screen
+            // after the code is consumed — a back tap returns to the phone step.
+            context.pushReplacement('/auth/forgot/reset', extra: <String, String?>{
               'phone': widget.phone,
               'token': state.token,
               'from': widget.from,
