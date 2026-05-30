@@ -16,7 +16,6 @@ import '../features/auth/bloc/session_cubit.dart';
 import '../features/cart/bloc/cart_cubit.dart';
 import '../features/cart/cart_sender.dart';
 import '../features/cart/outbox_service.dart';
-import '../features/cart/session_cart_coordinator.dart';
 
 final getIt = GetIt.instance;
 
@@ -34,10 +33,5 @@ void setupDi() {
     ..registerLazySingleton<CartCubit>(CartCubit.new)
     ..registerLazySingleton<OrderRepository>(MockOrderRepository.new)
     ..registerLazySingleton<OutboxService>(() => OutboxService(getIt<OrderRepository>()))
-    ..registerLazySingleton<CartSender>(() => CartSender(getIt<OrderRepository>(), getIt<OutboxService>()))
-    ..registerLazySingleton<SessionCartCoordinator>(
-        () => SessionCartCoordinator(getIt<SessionCubit>(), getIt<CartCubit>()));
-
-  // Bind the cart to the session (merge on sign-in, reset for guest on sign-out).
-  getIt<SessionCartCoordinator>().start();
+    ..registerLazySingleton<CartSender>(() => CartSender(getIt<OrderRepository>(), getIt<OutboxService>()));
 }
