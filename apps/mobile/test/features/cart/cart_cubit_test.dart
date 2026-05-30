@@ -95,4 +95,52 @@ void main() {
       expect(c.state.shopCarts.map((s) => s.shopId).toList(), ['s1', 's2']);
     },
   );
+
+  group('session binding (ISSUE-1)', () {
+    test('mergeOnSignIn keeps the guest cart when the user cart is empty', () {
+      final c = CartCubit();
+      addP1(c);
+      c.mergeOnSignIn('u1');
+      expect(c.state.shopCart('s1')!.lines.single.qty, 1);
+    });
+
+    test('mergeOnSignIn sums quantities for the same product', () {
+      final c = CartCubit();
+      addP1(c); // guest p1
+      c.mergeOnSignIn('u1'); // u1 = {s1: p1x1}
+      c.saveAndResetOnSignOut(); // saved, guest empty
+      addP1(c); // guest p1 again
+      c.mergeOnSignIn('u1'); // merge → p1x2
+      expect(c.state.shopCart('s1')!.lines.single.qty, 2);
+    });
+
+    test('saveAndResetOnSignOut empties the cart for the next guest', () {
+      final c = CartCubit();
+      addP1(c);
+      c.mergeOnSignIn('u1');
+      c.saveAndResetOnSignOut();
+      expect(c.state.isEmpty, isTrue);
+    });
+
+    test('user keeps their cart across sign-out then sign-in, plus guest items', () {
+      final c = CartCubit();
+      addP1(c); // guest p1 @ s1
+      c.mergeOnSignIn('u1'); // u1 has s1/p1
+      c.addProduct(product: _prod('p2'), shopId: 's2', shopName: 'محل ب', shopPhone: 'z');
+      c.saveAndResetOnSignOut(); // u1 saved {s1,s2}, guest empty
+      expect(c.state.isEmpty, isTrue);
+      c.addProduct(product: _prod('p3'), shopId: 's3', shopName: 'محل ج', shopPhone: 'w');
+      c.mergeOnSignIn('u1'); // load {s1,s2} + merge {s3}
+      expect(c.state.shopCarts.map((s) => s.shopId).toSet(), {'s1', 's2', 's3'});
+    });
+
+    test("a different user does not see another user's cart", () {
+      final c = CartCubit();
+      addP1(c);
+      c.mergeOnSignIn('u1');
+      c.saveAndResetOnSignOut();
+      c.mergeOnSignIn('u2'); // fresh user, guest was empty
+      expect(c.state.isEmpty, isTrue);
+    });
+  });
 }
