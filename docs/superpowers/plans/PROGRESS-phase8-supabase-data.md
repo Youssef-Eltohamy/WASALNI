@@ -23,16 +23,16 @@
 
 ## ✅ تشغيل الـ SQL — اتعمل بالـ CLI (2026-05-30)
 
-اتعمل أوتوماتيك بالـ Supabase CLI (مش يدوي):
+اتعمل بالـ Supabase CLI. السرد الأمين للخطوات (فيها عقبة اتحلّت):
 
-1. `supabase login --token <token>` (المالك سجّل دخول).
-2. `supabase migration repair --status reverted 20260519132341` — تنظيف migration قديم متبقّي في الريموت.
-3. `supabase db push` → طبّق `20260530120000_data_layer.sql` (الجداول).
-4. **الـ seed:** `db push` مابيشغّلش `seed.sql` على الريموت، فعملنا نسخة منه كـ migration:
-   `supabase/migrations/20260530143052_seed_data.sql` (نفس محتوى `seed.sql`، idempotent بـ `on conflict do nothing`) و `db push` طبّقها.
+1. `supabase login --token <token>`.
+2. `supabase migration repair --status reverted 20260519132341` — تنظيف migration قديم.
+3. `supabase db push` **فشل**: الريموت كان فيه جدول `profiles` قديم بـ `id uuid` (من تجربة سابقة)، فـ `create table if not exists` تخطّاه، وبعدين `listings.owner_id text references profiles(id)` رفض لتعارض النوع (text ضد uuid). الـ push وقف ومفيش جداول اتعملت.
+4. **الحل:** الجدول القديم `profiles` كان **فاضي (0 صفوف)** فاتمسح (`drop table profiles cascade`)، وبعدين طبّقنا السكيمة + الـ seed **مباشرة** بـ `supabase db query --linked` (الطريقة اللي الـ skill بينصح بيها لتطبيق الschema).
+5. الـ seed اتعمل كمان كـ migration للسجل: `supabase/migrations/20260530143052_seed_data.sql` (نسخة من `seed.sql`، idempotent). واتعمل `migration repair --status applied` للاتنين عشان `migration list` يطابق الواقع (Local = Remote للكل).
 
 **التحقّق الفعلي (عبر anon REST — نفس اللي التطبيق يستخدمه):**
-- القراءة: villages=2، categories=6، listings=8، products=7، profiles=9 ✅
+- القراءة: villages=2، categories=6، listings=8، products=7، profiles=9 ✅ (anon قرأ listings كفر فعلاً)
 - كتابة الطلبات: anon قدر يعمل insert في `order_intents` (HTTP 201) ✅ — اتمسحت صفوف الاختبار بعدها (`order_intents=0`).
 
 > **ملاحظة أمان:** الـ access token اللي اتستخدم ظهر في المحادثة — يُفضّل عمل **revoke** له من https://supabase.com/dashboard/account/tokens وإنشاء واحد جديد.
