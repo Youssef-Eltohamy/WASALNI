@@ -1,6 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:wasalni/core/network/repository_exception.dart';
 import 'package:wasalni/data/models/profile.dart';
 import 'package:wasalni/data/repositories/auth_repository.dart';
 import 'package:wasalni/features/auth/auth_exceptions.dart';
@@ -43,5 +44,23 @@ void main() {
     act: (c) => c.submit('brandnew'),
     expect: () =>
         [isA<ResetPasswordSubmitting>(), isA<ResetPasswordTokenInvalid>()],
+  );
+
+  blocTest<ResetPasswordCubit, ResetPasswordState>(
+    'no connection → [submitting, error]',
+    build: () {
+      when(() => repo.setNewPassword(
+              phone: any(named: 'phone'),
+              token: any(named: 'token'),
+              newPassword: any(named: 'newPassword')))
+          .thenThrow(const NoConnectionException());
+      return ResetPasswordCubit(repo, '+201000000000', 'rt_0');
+    },
+    act: (c) => c.submit('brandnew'),
+    expect: () => [
+      isA<ResetPasswordSubmitting>(),
+      isA<ResetPasswordError>()
+          .having((s) => s.message, 'message', 'مفيش اتصال بالإنترنت'),
+    ],
   );
 }

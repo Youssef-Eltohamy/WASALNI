@@ -50,4 +50,26 @@ void main() {
     act: (c) => c.verify('1234'),
     expect: () => [isA<ResetOtpVerifying>(), isA<ResetOtpError>()],
   );
+
+  blocTest<ResetOtpCubit, ResetOtpState>(
+    'resend success → no state change',
+    build: () {
+      when(() => repo.startReset(phone: any(named: 'phone')))
+          .thenAnswer((_) async {});
+      return ResetOtpCubit(repo, '+201000000000');
+    },
+    act: (c) => c.resend(),
+    expect: () => <ResetOtpState>[],
+  );
+
+  blocTest<ResetOtpCubit, ResetOtpState>(
+    'resend throws → swallowed, no state change',
+    build: () {
+      when(() => repo.startReset(phone: any(named: 'phone')))
+          .thenThrow(const OtpResendTooSoonException());
+      return ResetOtpCubit(repo, '+201000000000');
+    },
+    act: (c) => c.resend(),
+    expect: () => <ResetOtpState>[],
+  );
 }
