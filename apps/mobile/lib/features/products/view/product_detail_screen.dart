@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/format/money.dart';
+import '../../../core/layout/responsive.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -37,25 +38,28 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           ProductDetailError(:final message) => ErrorView(message: message),
           ProductDetailLoaded(:final product, :final shopName, :final shopPhone) =>
             ListView(
-              padding: const EdgeInsets.all(AppSpacing.lg),
+              padding: Responsive.formPadding(context),
               children: [
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxHeight: 220),
-                  child: AspectRatio(
-                    aspectRatio: 4 / 3,
-                    child: (product.imageUrl == null || product.imageUrl!.isEmpty)
-                        ? Container(
-                            color: AppColors.border,
-                            child: const Icon(Icons.inventory_2_outlined,
-                                size: 64, color: AppColors.textMuted))
-                        : CachedNetworkImage(imageUrl: product.imageUrl!, fit: BoxFit.cover),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 240),
+                    child: AspectRatio(
+                      aspectRatio: 4 / 3,
+                      child: (product.imageUrl == null || product.imageUrl!.isEmpty)
+                          ? const DecoratedBox(
+                              decoration: BoxDecoration(color: AppColors.surfaceAlt),
+                              child: Icon(Icons.inventory_2_outlined,
+                                  size: 64, color: AppColors.textMuted))
+                          : CachedNetworkImage(imageUrl: product.imageUrl!, fit: BoxFit.cover),
+                    ),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 Text(product.name, style: AppTextStyles.headline),
                 const SizedBox(height: AppSpacing.xs),
                 Text(formatEgp(product.priceEgp),
-                    style: AppTextStyles.title.copyWith(color: AppColors.primary)),
+                    style: AppTextStyles.display.copyWith(color: AppColors.primary)),
                 const SizedBox(height: AppSpacing.sm),
                 Text(product.description, style: AppTextStyles.body),
                 const SizedBox(height: AppSpacing.md),

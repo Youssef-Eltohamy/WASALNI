@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/layout/responsive.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -67,20 +68,41 @@ class _Authenticated extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: Responsive.formPadding(context),
       children: [
-        const SizedBox(height: AppSpacing.md),
-        const CircleAvatar(radius: 36, backgroundColor: AppColors.primary,
-            child: Icon(Icons.person, size: 40, color: Colors.white)),
+        const SizedBox(height: AppSpacing.xl),
+        Center(
+          child: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [AppColors.primaryLight, AppColors.primaryDark],
+              ),
+            ),
+            child: const CircleAvatar(
+              radius: 40,
+              backgroundColor: AppColors.surface,
+              child: Icon(Icons.person, size: 44, color: AppColors.primary),
+            ),
+          ),
+        ),
         const SizedBox(height: AppSpacing.md),
         Text(name, style: AppTextStyles.headline, textAlign: TextAlign.center),
         const SizedBox(height: AppSpacing.xs),
         Text(phone, style: AppTextStyles.caption, textAlign: TextAlign.center),
         const SizedBox(height: AppSpacing.xl),
         OutlinedButton.icon(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.error,
+            side: const BorderSide(color: AppColors.error, width: 1.5),
+            minimumSize: const Size.fromHeight(52),
+          ),
           onPressed: onSignOut,
-          icon: const Icon(Icons.logout, color: AppColors.error),
-          label: Text('تسجيل الخروج', style: AppTextStyles.label.copyWith(color: AppColors.error)),
+          icon: const Icon(Icons.logout),
+          label: const Text('تسجيل الخروج'),
         ),
       ],
     );
