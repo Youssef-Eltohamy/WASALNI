@@ -17,6 +17,7 @@ import '../features/cart/bloc/cart_cubit.dart';
 import '../features/cart/cart_sender.dart';
 import '../features/cart/outbox_service.dart';
 import '../features/cart/session_cart_coordinator.dart';
+import '../features/cart/session_cart_coordinator.dart';
 
 final getIt = GetIt.instance;
 
