@@ -67,4 +67,14 @@ void main() {
     expect(find.text('forgot stub'), findsOneWidget);
     expect(session.isAuthenticated, isFalse);
   });
+
+  testWidgets('short password shows inline error, no submit', (tester) async {
+    await tester.pumpWidget(app(token));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).first, '123');
+    await tester.tap(find.text('تأكيد كلمة السر الجديدة'));
+    await tester.pump();
+    expect(find.text('كلمة السر لازم 6 حروف على الأقل'), findsOneWidget);
+    expect(session.isAuthenticated, isFalse);
+  });
 }
