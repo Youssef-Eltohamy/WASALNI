@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import '../core/connectivity/connectivity_service.dart';
+import '../core/supabase/supabase_init.dart';
 import '../data/repositories/auth_repository.dart';
 import '../data/repositories/category_repository.dart';
 import '../data/repositories/listing_repository.dart';
@@ -7,11 +8,11 @@ import '../data/repositories/order_repository.dart';
 import '../data/repositories/product_repository.dart';
 import '../data/repositories/village_repository.dart';
 import '../data/repositories/mock/mock_auth_repository.dart';
-import '../data/repositories/mock/mock_category_repository.dart';
-import '../data/repositories/mock/mock_listing_repository.dart';
-import '../data/repositories/mock/mock_order_repository.dart';
-import '../data/repositories/mock/mock_product_repository.dart';
-import '../data/repositories/mock/mock_village_repository.dart';
+import '../data/repositories/supabase/supabase_category_repository.dart';
+import '../data/repositories/supabase/supabase_listing_repository.dart';
+import '../data/repositories/supabase/supabase_order_repository.dart';
+import '../data/repositories/supabase/supabase_product_repository.dart';
+import '../data/repositories/supabase/supabase_village_repository.dart';
 import '../features/auth/bloc/session_cubit.dart';
 import '../features/cart/bloc/cart_cubit.dart';
 import '../features/cart/cart_sender.dart';
@@ -25,14 +26,14 @@ final getIt = GetIt.instance;
 void setupDi() {
   getIt
     ..registerLazySingleton<AuthRepository>(MockAuthRepository.new)
-    ..registerLazySingleton<ListingRepository>(MockListingRepository.new)
-    ..registerLazySingleton<VillageRepository>(MockVillageRepository.new)
-    ..registerLazySingleton<CategoryRepository>(MockCategoryRepository.new)
-    ..registerLazySingleton<ProductRepository>(MockProductRepository.new)
+    ..registerLazySingleton<ListingRepository>(() => SupabaseListingRepository(supabaseClient))
+    ..registerLazySingleton<VillageRepository>(() => SupabaseVillageRepository(supabaseClient))
+    ..registerLazySingleton<CategoryRepository>(() => SupabaseCategoryRepository(supabaseClient))
+    ..registerLazySingleton<ProductRepository>(() => SupabaseProductRepository(supabaseClient))
     ..registerLazySingleton<ConnectivityService>(ConnectivityServiceImpl.new)
     ..registerLazySingleton<SessionCubit>(SessionCubit.new)
     ..registerLazySingleton<CartCubit>(CartCubit.new)
-    ..registerLazySingleton<OrderRepository>(MockOrderRepository.new)
+    ..registerLazySingleton<OrderRepository>(() => SupabaseOrderRepository(supabaseClient))
     ..registerLazySingleton<OutboxService>(() => OutboxService(getIt<OrderRepository>()))
     ..registerLazySingleton<CartSender>(() => CartSender(getIt<OrderRepository>(), getIt<OutboxService>()))
     ..registerLazySingleton<SessionCartCoordinator>(
