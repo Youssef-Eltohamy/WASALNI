@@ -22,6 +22,7 @@ import '../features/products/view/product_detail_screen.dart';
 import '../features/search/bloc/search_bloc.dart';
 import '../features/search/view/search_screen.dart';
 import '../features/auth/view/login_screen.dart';
+import '../features/auth/view/reset_otp_screen.dart';
 import '../features/auth/view/reset_phone_screen.dart';
 import '../features/auth/view/signup_screen.dart';
 import '../features/shell/scaffold_with_nav_bar.dart';
@@ -126,6 +127,13 @@ GoRouter createRouter() {
         builder: (context, state) {
           final extra = state.extra as Map<String, String?>?;
           return ResetPhoneScreen(from: extra?['from']);
+        },
+      ),
+      GoRoute(
+        path: '/auth/forgot/otp',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, String?>?;
+          return ResetOtpScreen(phone: extra?['phone'] ?? '', from: extra?['from']);
         },
       ),
     ],
