@@ -17,24 +17,36 @@
 | 6 | repo: listing (feed/search/getById) | ✅ تم |
 | 7 | repo: order + تبديل DI لـ Supabase | ✅ تم |
 | review | مراجعة + إصلاح (web-safe errors, search sanitize, price parse) | ✅ تم |
-| 8 | **تشغيل الـ SQL يدويًا + تجربة فعلية** | ⏳ **مطلوب من المالك** |
+| 8 | **تشغيل الـ SQL على Supabase + تحقّق فعلي** | ✅ **تم (CLI)** |
 
 > **الكود:** `flutter analyze` نضيف + **148 اختبار يعدّي** + الـ web build بيكمبايل. الـ auth لسه mock (`1234`).
 
-## ⏳ المتبقّي — خطوات يدوية (المالك) — Task 8
+## ✅ تشغيل الـ SQL — اتعمل بالـ CLI (2026-05-30)
 
-الـ subagents/الكود مايقدروش يشغّلوا SQL على Supabase (مفيش وصول للـ DB). لازم المالك يعمل:
+اتعمل أوتوماتيك بالـ Supabase CLI (مش يدوي):
 
-1. **افتح** Supabase Dashboard → المشروع `nseuurovkxymrwxamftz` → **SQL Editor**.
-2. **انسخ والصق وشغّل** محتوى `supabase/migrations/20260530120000_data_layer.sql` (مرة واحدة).
-3. **انسخ والصق وشغّل** محتوى `supabase/seed.sql`.
-4. **اتأكد** في Table Editor: `listings`=8 صفوف، `products`=7، `categories`=6، `villages`=2، `profiles`=9.
-5. **جرّب الأب** (web): `flutter build web --no-tree-shake-icons` ثم `py -3 serve_web.py` → `http://127.0.0.1:8080`:
-   - الـ feed يعرض محلات كفر المقدام (الموثّق/المميّز الأول)، فلتر القرية يبدّل لتفهنا.
-   - التصنيفات 6.
-   - صيدلية الشفاء تعرض 3 منتجات (الكمامات unavailable).
-   - بحث "سباك" يرجّع السباكين.
-   - أضف منتج للسلة → ابعت الطلب → صف جديد يظهر في `order_intents`.
+1. `supabase login --token <token>` (المالك سجّل دخول).
+2. `supabase migration repair --status reverted 20260519132341` — تنظيف migration قديم متبقّي في الريموت.
+3. `supabase db push` → طبّق `20260530120000_data_layer.sql` (الجداول).
+4. **الـ seed:** `db push` مابيشغّلش `seed.sql` على الريموت، فعملنا نسخة منه كـ migration:
+   `supabase/migrations/20260530143052_seed_data.sql` (نفس محتوى `seed.sql`، idempotent بـ `on conflict do nothing`) و `db push` طبّقها.
+
+**التحقّق الفعلي (عبر anon REST — نفس اللي التطبيق يستخدمه):**
+- القراءة: villages=2، categories=6، listings=8، products=7، profiles=9 ✅
+- كتابة الطلبات: anon قدر يعمل insert في `order_intents` (HTTP 201) ✅ — اتمسحت صفوف الاختبار بعدها (`order_intents=0`).
+
+> **ملاحظة أمان:** الـ access token اللي اتستخدم ظهر في المحادثة — يُفضّل عمل **revoke** له من https://supabase.com/dashboard/account/tokens وإنشاء واحد جديد.
+
+## المتبقّي — تجربة يدوية اختيارية (المالك)
+
+جرّب الأب على الداتا الحقيقية لما يكون فيه وقت:
+```
+flutter build web --no-tree-shake-icons
+py -3 serve_web.py    # → http://127.0.0.1:8080
+```
+- الـ feed يعرض محلات كفر المقدام (الموثّق/المميّز الأول)، فلتر القرية يبدّل لتفهنا.
+- التصنيفات 6. صيدلية الشفاء تعرض 3 منتجات (الكمامات unavailable). بحث "سباك" يرجّع السباكين.
+- أضف منتج للسلة → ابعت الطلب → صف جديد يظهر في `order_intents`.
 
 ## القرارات المنفّذة
 
